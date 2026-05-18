@@ -342,9 +342,18 @@ function stripHtml(html) { const d = document.createElement('div'); d.innerHTML 
 /* ============= LEAFLET MAP ============= */
 let map = null;
 let markers = {};
+let mapInitialized = false;
 
 function initMap() {
-  if (typeof L === 'undefined') return;
+  if (mapInitialized || typeof L === 'undefined') return;
+  const mapEl = document.getElementById('map');
+  if (!mapEl) return;
+
+  // Avoid Leaflet's "Map container is invisible" error when div is 0x0
+  const rect = mapEl.getBoundingClientRect();
+  if (rect.width === 0 || rect.height === 0) return;
+
+  mapInitialized = true;
   map = L.map('map', {
     minZoom: 9, maxZoom: 18,
     scrollWheelZoom: false,
@@ -649,20 +658,44 @@ const mapClose = document.getElementById('mapClose');
 function openMapOverlay() {
   mapLayout?.classList.add('is-open');
   document.body.style.overflow = 'hidden';
+  // Wait for the overlay to be visible before initializing/resizing the map
   setTimeout(() => {
-    map?.invalidateSize();
-    const bounds = L.latLngBounds(PLACES.map(p => p.coords)).pad(0.15);
-    map?.fitBounds(bounds);
-  }, 80);
+    if (!mapInitialized) {
+      initMap();
+    } else {
+      map?.invalidateSize();
+      const bounds = L.latLngBounds(PLACES.map(p => p.coords)).pad(0.15);
+      map?.fitBounds(bounds);
+    }
+  }, 120);
 }
 function closeMapOverlay() {
   mapLayout?.classList.remove('is-open');
   document.body.style.overflow = '';
 }
 mapTrigger?.addEventListener('click', openMapOverlay);
+mapTrigger?.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    openMapOverlay();
+  }
+});
 mapClose?.addEventListener('click', closeMapOverlay);
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && mapLayout?.classList.contains('is-open')) closeMapOverlay();
+});
+
+/* Re-init or resize on viewport changes (e.g. rotate, resize across mobile↔desktop) */
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    if (!mapInitialized) {
+      initMap();
+    } else {
+      map?.invalidateSize();
+    }
+  }, 200);
 });
 
 /* ============= INIT ============= */

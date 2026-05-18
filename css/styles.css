@@ -883,7 +883,11 @@ section { position: relative; padding: clamp(4rem, 9vw, 8rem) 0; }
     text-align: left;
     padding: 0;
     aspect-ratio: 4 / 3;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
   }
+  .map-trigger:focus-visible { outline: 2px solid var(--terracotta); outline-offset: 3px; }
   .map-trigger__img {
     position: absolute;
     inset: 0;
