@@ -296,7 +296,7 @@ function stripHtml(html) { const d = document.createElement('div'); d.innerHTML 
     const locations = s.placeIds.map(id => placeById(id)?.name).filter(Boolean);
     const ready = s.status === 'ready';
     return `
-    <article class="subject rv" id="subj-${s.key}" data-subject="${s.key}" data-status="${s.status}">
+    <article class="subject rv" id="subj-${s.key}" data-subject="${s.key}" data-subject-num="${s.num}" data-status="${s.status}">
       <div class="subject__media" data-tilt>
         <div class="subject__media-inner">
           <img src="${primary.img}" alt="${primary.name}" loading="lazy">
@@ -342,6 +342,10 @@ function stripHtml(html) { const d = document.createElement('div'); d.innerHTML 
 /* ============= LEAFLET MAP ============= */
 let map = null;
 let markers = {};
+let routeLines = { dolores: null, gto: null, link: null };
+let visitedIds = new Set();
+let currentFilter = 'all';
+let activeId = null;
 
 function initMap() {
   if (typeof L === 'undefined') return;
@@ -368,14 +372,35 @@ function initMap() {
   const guanajuatoCoords = PLACES.filter(p => p.city === 'Guanajuato').map(p => p.coords);
 
   if (doloresCoords.length > 1) {
-    L.polyline(doloresCoords, { color: '#A57826', weight: 3, opacity: 0.75, smoothFactor: 1.2, className: 'route-line' }).addTo(map);
+    routeLines.dolores = L.polyline(doloresCoords, { color: '#B37D38', weight: 3, opacity: 0.9, smoothFactor: 1.2, className: 'route-line route-line--dolores' }).addTo(map);
   }
   if (guanajuatoCoords.length > 1) {
-    L.polyline(guanajuatoCoords, { color: '#C9461C', weight: 3, opacity: 0.75, smoothFactor: 1.2, className: 'route-line' }).addTo(map);
+    routeLines.gto = L.polyline(guanajuatoCoords, { color: '#D73220', weight: 3, opacity: 0.9, smoothFactor: 1.2, className: 'route-line route-line--gto' }).addTo(map);
   }
-  L.polyline([doloresCoords[doloresCoords.length - 1], guanajuatoCoords[0]], {
-    color: '#6B5F54', weight: 1.5, opacity: 0.5, dashArray: '2 8', smoothFactor: 1
+  routeLines.link = L.polyline([doloresCoords[doloresCoords.length - 1], guanajuatoCoords[0]], {
+    color: '#684037', weight: 1.5, opacity: 0.55, dashArray: '2 8', smoothFactor: 1, className: 'route-line route-line--link'
   }).addTo(map);
+
+  // Pre-set rutas sólidas al estado "sin dibujar" (la dashed link no se anima
+  // para preservar su patrón punteado).
+  setTimeout(() => {
+    [routeLines.dolores, routeLines.gto].forEach(line => {
+      if (!line) return;
+      const path = line._path;
+      if (!path) return;
+      try {
+        const len = path.getTotalLength();
+        path.style.transition = 'none';
+        path.style.strokeDasharray = len;
+        path.style.strokeDashoffset = len;
+      } catch (e) { /* noop */ }
+    });
+    // La línea punteada simplemente aparece con fade
+    if (routeLines.link?._path) {
+      routeLines.link._path.style.opacity = '0';
+      routeLines.link._path.style.transition = 'opacity 1.2s ease 1.6s';
+    }
+  }, 0);
 
   PLACES.forEach(p => {
     const cityClass = p.city === 'Dolores Hidalgo' ? 'dolores' : '';
@@ -408,20 +433,29 @@ function initMap() {
 }
 
 function setActive(id) {
+  activeId = id;
   document.querySelectorAll('.map-list-item').forEach(el => {
     el.classList.toggle('is-active', +el.dataset.place === id);
   });
   document.querySelectorAll('.leaflet-marker-pin').forEach(el => {
     el.classList.toggle('is-active', +el.dataset.id === id);
   });
+  if (id != null) {
+    visitedIds.add(id);
+    updateActiveCard(id);
+    updateNavProgress();
+  }
 }
 
 function resetMap() {
   if (!map) return;
+  stopTour();
   const bounds = L.latLngBounds(PLACES.map(p => p.coords)).pad(0.15);
   map.flyToBounds(bounds, { duration: 1.2 });
   document.querySelectorAll('.map-list-item').forEach(el => el.classList.remove('is-active'));
   document.querySelectorAll('.leaflet-marker-pin').forEach(el => el.classList.remove('is-active'));
+  clearActiveCard();
+  activeId = null;
 }
 
 document.addEventListener('click', e => {
@@ -651,6 +685,282 @@ window.addEventListener('resize', () => {
   resizeTimer = setTimeout(() => { map?.invalidateSize(); }, 200);
 });
 
+/* ============= ROUTE DRAW ANIMATION =============
+   Cuando el mapa entra en viewport, las polylines se dibujan
+   progresivamente usando stroke-dashoffset → 0.
+*/
+function animateRouteDraw() {
+  const lines = [routeLines.dolores, routeLines.gto].filter(Boolean);
+  lines.forEach((line, i) => {
+    const path = line._path;
+    if (!path) return;
+    try {
+      path.style.transition = `stroke-dashoffset 1.8s cubic-bezier(.2,.7,0,1) ${i * 0.6}s`;
+      void path.getBoundingClientRect();
+      path.style.strokeDashoffset = '0';
+    } catch (err) { /* noop */ }
+  });
+  // Línea punteada inter-ciudades: fade-in tras dibujar la primera
+  if (routeLines.link?._path) {
+    routeLines.link._path.style.opacity = '';
+  }
+}
+
+function setupRouteDrawOnView() {
+  const sec = document.getElementById('map');
+  if (!sec) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        setTimeout(animateRouteDraw, 250);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.25 });
+  io.observe(sec);
+}
+
+/* ============= DISTANCE (Haversine, km) ============= */
+function haversineKm(a, b) {
+  const toRad = (d) => d * Math.PI / 180;
+  const R = 6371;
+  const dLat = toRad(b[0] - a[0]);
+  const dLon = toRad(b[1] - a[1]);
+  const lat1 = toRad(a[0]), lat2 = toRad(b[0]);
+  const h = Math.sin(dLat/2)**2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon/2)**2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+/* ============= ACTIVE CARD ============= */
+const activeCard = document.getElementById('mapActiveCard');
+const activeCardImg = document.getElementById('activeCardImg');
+const activeCardNum = document.getElementById('activeCardNum');
+const activeCardCity = document.getElementById('activeCardCity');
+const activeCardTitle = document.getElementById('activeCardTitle');
+const activeCardDesc = document.getElementById('activeCardDesc');
+const activeCardDist = document.getElementById('activeCardDist');
+const activeCardCta = document.getElementById('activeCardCta');
+const activeCardClose = document.getElementById('activeCardClose');
+
+function updateActiveCard(id) {
+  if (!activeCard) return;
+  const p = placeById(id);
+  if (!p) return;
+  activeCardImg.src = p.img;
+  activeCardImg.alt = p.name;
+  activeCardNum.textContent = p.num;
+  activeCardCity.textContent = p.cityShort;
+  activeCardTitle.textContent = p.name;
+  activeCardDesc.textContent = p.desc;
+
+  const idx = PLACES.findIndex(x => x.id === id);
+  const next = PLACES[idx + 1];
+  if (next) {
+    const km = haversineKm(p.coords, next.coords);
+    const lbl = km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
+    activeCardDist.textContent = `→ siguiente · ${lbl} · ${next.name}`;
+    activeCardDist.style.visibility = 'visible';
+  } else {
+    activeCardDist.textContent = '✦ última parada';
+    activeCardDist.style.visibility = 'visible';
+  }
+
+  activeCardCta.dataset.subject = p.subjects?.[0] || '';
+  activeCardCta.style.display = p.subjects?.length ? '' : 'none';
+
+  activeCard.classList.add('is-open');
+  activeCard.setAttribute('aria-hidden', 'false');
+}
+
+function clearActiveCard() {
+  if (!activeCard) return;
+  activeCard.classList.remove('is-open');
+  activeCard.setAttribute('aria-hidden', 'true');
+}
+
+activeCardClose?.addEventListener('click', clearActiveCard);
+activeCardCta?.addEventListener('click', () => {
+  const k = activeCardCta.dataset.subject;
+  if (!k) return;
+  const target = document.getElementById('subj-' + k);
+  if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+/* ============= FILTER CHIPS ============= */
+function setFilter(filter) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-chip').forEach(btn => {
+    const on = btn.dataset.filter === filter;
+    btn.classList.toggle('is-active', on);
+    btn.setAttribute('aria-selected', String(on));
+  });
+  let visible = 0;
+  PLACES.forEach(p => {
+    const show = filter === 'all' || p.city === filter;
+    const m = markers[p.id];
+    if (!m) return;
+    if (show) {
+      if (!map.hasLayer(m)) m.addTo(map);
+      visible++;
+    } else {
+      if (map.hasLayer(m)) map.removeLayer(m);
+    }
+    const li = document.querySelector(`.map-list-item[data-place="${p.id}"]`);
+    if (li) li.style.display = show ? '' : 'none';
+  });
+
+  // Toggle route lines
+  if (routeLines.dolores) {
+    const showD = filter === 'all' || filter === 'Dolores Hidalgo';
+    showD ? (map.hasLayer(routeLines.dolores) || routeLines.dolores.addTo(map)) : map.removeLayer(routeLines.dolores);
+  }
+  if (routeLines.gto) {
+    const showG = filter === 'all' || filter === 'Guanajuato';
+    showG ? (map.hasLayer(routeLines.gto) || routeLines.gto.addTo(map)) : map.removeLayer(routeLines.gto);
+  }
+  if (routeLines.link) {
+    filter === 'all'
+      ? (map.hasLayer(routeLines.link) || routeLines.link.addTo(map))
+      : map.removeLayer(routeLines.link);
+  }
+
+  document.getElementById('mapSidebarCount').textContent = visible;
+
+  // Re-encuadrar
+  const visiblePlaces = PLACES.filter(p => filter === 'all' || p.city === filter);
+  if (visiblePlaces.length) {
+    const b = L.latLngBounds(visiblePlaces.map(p => p.coords)).pad(0.18);
+    map.flyToBounds(b, { duration: 0.9 });
+  }
+}
+
+document.querySelectorAll('.filter-chip').forEach(btn => {
+  btn.addEventListener('click', () => setFilter(btn.dataset.filter));
+});
+
+/* ============= TOUR AUTOPLAY ============= */
+let tourState = { running: false, idx: 0, timer: null, rafId: null, startedAt: 0 };
+const TOUR_STEP_MS = 4200;
+const tourBtn = document.getElementById('tourBtn');
+const tourBar = document.getElementById('tourProgressBar');
+const tourLbl = tourBtn?.querySelector('.tour-btn__lbl');
+
+function startTour() {
+  if (!map) return;
+  if (tourState.running) { stopTour(); return; }
+  if (currentFilter !== 'all') setFilter('all');
+  tourState.running = true;
+  tourState.idx = 0;
+  tourBtn?.classList.add('is-playing');
+  if (tourLbl) tourLbl.textContent = 'Pausar recorrido';
+  stepTour();
+  animateTourBar();
+}
+
+function stopTour() {
+  tourState.running = false;
+  clearTimeout(tourState.timer);
+  cancelAnimationFrame(tourState.rafId);
+  if (tourBar) tourBar.style.transform = 'scaleX(0)';
+  tourBtn?.classList.remove('is-playing');
+  if (tourLbl) tourLbl.textContent = 'Reproducir recorrido';
+}
+
+function stepTour() {
+  if (!tourState.running) return;
+  const p = PLACES[tourState.idx];
+  if (!p) { stopTour(); return; }
+  setActive(p.id);
+  map.flyTo(p.coords, 15.5, { duration: 1.5, easeLinearity: 0.25 });
+  setTimeout(() => { if (tourState.running) markers[p.id]?.openPopup(); }, 700);
+  tourState.startedAt = performance.now();
+  tourState.timer = setTimeout(() => {
+    tourState.idx++;
+    if (tourState.idx >= PLACES.length) {
+      stopTour();
+      resetMap();
+      return;
+    }
+    stepTour();
+  }, TOUR_STEP_MS);
+}
+
+function animateTourBar() {
+  if (!tourBar) return;
+  const tick = (now) => {
+    if (!tourState.running) return;
+    const t = Math.min((now - tourState.startedAt) / TOUR_STEP_MS, 1);
+    tourBar.style.transform = `scaleX(${t})`;
+    tourState.rafId = requestAnimationFrame(tick);
+  };
+  tourState.rafId = requestAnimationFrame(tick);
+}
+
+tourBtn?.addEventListener('click', startTour);
+
+/* ============= HOVER PREVIEW (SIDEBAR) =============
+   Hover sobre item del sidebar → bounce marker + actualiza tarjeta.
+   No mueve el mapa (para no marear). El click sí hace flyTo.
+*/
+function setupSidebarHoverPreview() {
+  document.querySelectorAll('.map-list-item').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      if (tourState.running) return;
+      const id = +el.dataset.place;
+      const pin = document.querySelector(`.leaflet-marker-pin[data-id="${id}"]`);
+      pin?.classList.add('is-bounce');
+      updateActiveCard(id);
+    });
+    el.addEventListener('mouseleave', () => {
+      const id = +el.dataset.place;
+      const pin = document.querySelector(`.leaflet-marker-pin[data-id="${id}"]`);
+      pin?.classList.remove('is-bounce');
+      if (activeId !== id) {
+        if (activeId) updateActiveCard(activeId);
+        else clearActiveCard();
+      }
+    });
+  });
+}
+
+/* ============= SUBJECT SCROLL SYNC =============
+   Al hacer scroll por las secciones de asignaturas, marca
+   el lugar correspondiente como activo en mapa (sin scroll del mapa).
+*/
+function setupSubjectScrollSync() {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const subjectKey = e.target.dataset.subject;
+      if (!subjectKey) return;
+      const s = subjectByKey(subjectKey);
+      const placeId = s?.placeIds?.[0];
+      if (placeId) {
+        visitedIds.add(placeId);
+        updateNavProgress();
+      }
+    });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('.subject').forEach(s => io.observe(s));
+}
+
+/* ============= NAV PROGRESS (ANILLO) ============= */
+function updateNavProgress() {
+  const ring = document.getElementById('navProgressFg');
+  const num = document.getElementById('navProgressNum');
+  const wrap = document.getElementById('navProgress');
+  if (!ring || !num) return;
+  const total = PLACES.length;
+  const count = Math.min(visitedIds.size, total);
+  const r = 15.9;
+  const C = 2 * Math.PI * r;
+  ring.style.strokeDasharray = C;
+  ring.style.strokeDashoffset = C - (count / total) * C;
+  num.textContent = count;
+  wrap?.classList.toggle('is-on', count > 0);
+  if (count === total) wrap?.classList.add('is-complete');
+}
+
 /* ============= INIT ============= */
 document.addEventListener('DOMContentLoaded', () => {
   initMap();
@@ -659,4 +969,8 @@ document.addEventListener('DOMContentLoaded', () => {
   setupMagnetic();
   setupTilt();
   setupCursor();
+  setupRouteDrawOnView();
+  setupSidebarHoverPreview();
+  setupSubjectScrollSync();
+  updateNavProgress();
 });
