@@ -449,7 +449,6 @@ function setActive(id) {
 
 function resetMap() {
   if (!map) return;
-  stopTour();
   const bounds = L.latLngBounds(PLACES.map(p => p.coords)).pad(0.15);
   map.flyToBounds(bounds, { duration: 1.2 });
   document.querySelectorAll('.map-list-item').forEach(el => el.classList.remove('is-active'));
@@ -838,66 +837,6 @@ document.querySelectorAll('.filter-chip').forEach(btn => {
   btn.addEventListener('click', () => setFilter(btn.dataset.filter));
 });
 
-/* ============= TOUR AUTOPLAY ============= */
-let tourState = { running: false, idx: 0, timer: null, rafId: null, startedAt: 0 };
-const TOUR_STEP_MS = 4200;
-const tourBtn = document.getElementById('tourBtn');
-const tourBar = document.getElementById('tourProgressBar');
-const tourLbl = tourBtn?.querySelector('.tour-btn__lbl');
-
-function startTour() {
-  if (!map) return;
-  if (tourState.running) { stopTour(); return; }
-  if (currentFilter !== 'all') setFilter('all');
-  tourState.running = true;
-  tourState.idx = 0;
-  tourBtn?.classList.add('is-playing');
-  if (tourLbl) tourLbl.textContent = 'Pausar recorrido';
-  stepTour();
-  animateTourBar();
-}
-
-function stopTour() {
-  tourState.running = false;
-  clearTimeout(tourState.timer);
-  cancelAnimationFrame(tourState.rafId);
-  if (tourBar) tourBar.style.transform = 'scaleX(0)';
-  tourBtn?.classList.remove('is-playing');
-  if (tourLbl) tourLbl.textContent = 'Reproducir recorrido';
-}
-
-function stepTour() {
-  if (!tourState.running) return;
-  const p = PLACES[tourState.idx];
-  if (!p) { stopTour(); return; }
-  setActive(p.id);
-  map.flyTo(p.coords, 15.5, { duration: 1.5, easeLinearity: 0.25 });
-  setTimeout(() => { if (tourState.running) markers[p.id]?.openPopup(); }, 700);
-  tourState.startedAt = performance.now();
-  tourState.timer = setTimeout(() => {
-    tourState.idx++;
-    if (tourState.idx >= PLACES.length) {
-      stopTour();
-      resetMap();
-      return;
-    }
-    stepTour();
-  }, TOUR_STEP_MS);
-}
-
-function animateTourBar() {
-  if (!tourBar) return;
-  const tick = (now) => {
-    if (!tourState.running) return;
-    const t = Math.min((now - tourState.startedAt) / TOUR_STEP_MS, 1);
-    tourBar.style.transform = `scaleX(${t})`;
-    tourState.rafId = requestAnimationFrame(tick);
-  };
-  tourState.rafId = requestAnimationFrame(tick);
-}
-
-tourBtn?.addEventListener('click', startTour);
-
 /* ============= HOVER PREVIEW (SIDEBAR) =============
    Hover sobre item del sidebar → bounce marker + actualiza tarjeta.
    No mueve el mapa (para no marear). El click sí hace flyTo.
@@ -905,7 +844,6 @@ tourBtn?.addEventListener('click', startTour);
 function setupSidebarHoverPreview() {
   document.querySelectorAll('.map-list-item').forEach(el => {
     el.addEventListener('mouseenter', () => {
-      if (tourState.running) return;
       const id = +el.dataset.place;
       const pin = document.querySelector(`.leaflet-marker-pin[data-id="${id}"]`);
       pin?.classList.add('is-bounce');
