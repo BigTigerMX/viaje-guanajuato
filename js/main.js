@@ -405,7 +405,7 @@ function stripHtml(html) { const d = document.createElement('div'); d.innerHTML 
         <p class="place-card__short">${p.short}</p>
         <details class="place-card__more">
           <summary>
-            <span class="summary-text">Read history &amp; book</span>
+            <span class="summary-text">Read history</span>
             <span class="summary-icon" aria-hidden="true">+</span>
           </summary>
           <div class="place-card__deep">
@@ -441,7 +441,7 @@ function stripHtml(html) { const d = document.createElement('div'); d.innerHTML 
           <img src="${primary.img}" alt="${primary.name}" loading="lazy">
         </div>
         <div class="subject__media-tag">${s.num} · ${primary.name}</div>
-        <div class="subject__media-placeholder">${ready ? 'Pre-loaded content · awaiting trip photos' : 'Reserved for trip photo'}</div>
+        <div class="subject__media-placeholder">${ready ? 'Content · awaiting trip photos' : 'Reserved for trip photo'}</div>
       </div>
       <div class="subject__body">
         <div class="subject__head">
@@ -459,7 +459,7 @@ function stripHtml(html) { const d = document.createElement('div'); d.innerHTML 
         ${ready ? `
           <details class="subject__content">
             <summary>
-              <span class="summary-text">View pre-loaded content</span>
+              <span class="summary-text">Content</span>
               <span class="summary-icon" aria-hidden="true">+</span>
             </summary>
             <div class="subject__content-inner">
