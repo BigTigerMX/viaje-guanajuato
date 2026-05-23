@@ -171,9 +171,9 @@ const PLACES = [
     history: 'Inaugurated by President Porfirio Díaz on October 27, 1903, this theatre is considered one of the most beautiful in Latin America. Its facade combines Doric columns with bronze sculptures of the nine Muses; its interior is an explosion of <em>Moorish-Art Nouveau</em> style with red velvet, gilded plaster, and walnut wood. It is the main venue of the International Cervantino Festival each October.',
     highlights: ['Eclectic facade with the nine Muses in bronze', 'Moorish-Art Nouveau interior', 'Capacity of 902 seats', 'Main stage of the Cervantino Festival'],
     ticket: {
-      url: 'https://www.visitguanajuato.mx/',
-      operator: 'Visit Guanajuato · Teatro Juárez',
-      note: 'Building tour + show tickets via the box office'
+      url: 'https://cultura.guanajuato.gob.mx/index.php/tag/teatro-juarez/',
+      operator: 'Secretaría de Cultura de Guanajuato · Teatro Juárez',
+      note: 'Programming &amp; box office · Sopeña s/n · Wed–Sun 10–15h, 17–19h'
     }
   }
 ];
