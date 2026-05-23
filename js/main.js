@@ -59,9 +59,9 @@ const PLACES = [
     history: 'Hidalgo lived in this modest house from 1804 to 1810 while serving as parish priest. Inside, he promoted activities forbidden by the Spanish Crown: pottery, silk-worm breeding, beekeeping, vineyards, and even a small brick factory. The conspiracy meetings before the Grito were held in its inner rooms. It is now a museum that preserves his personal belongings, furniture, and books.',
     highlights: ['Hidalgo\'s personal library', 'Original 19th-century furniture', 'Workshop and patio where he taught crafts', 'Site declared National Monument'],
     ticket: {
-      url: 'https://lugares.inah.gob.mx/es/museos-inah/museo/466-museo-ex-curato-de-dolores.html?lugar_id=466',
-      operator: 'INAH · Museo Ex Curato de Dolores (Casa de Hidalgo)',
-      note: 'Wed–Sun 10–16h · $75 general · Sun free for nationals'
+      url: 'https://www.inah.gob.mx/museos/museo-historico-curato-de-dolores',
+      operator: 'INAH · Museo Histórico Curato de Dolores (Casa de Hidalgo)',
+      note: 'Wed–Sat 10–16h · $75 general · Sun free for nationals'
     }
   },
   {
