@@ -143,9 +143,9 @@ const PLACES = [
     history: 'Discovered in 1768 by Antonio Obregón y Alcocer, this mine became the largest silver producer in colonial New Spain —at its peak it produced two-thirds of all the silver in the world. The main shaft, the <em>Tiro de San Cayetano</em>, descends more than 500 meters. Next to it stands the <strong>Templo de San Cayetano</strong>, a Churrigueresque jewel financed entirely with the mine\'s silver, with three altarpieces covered in 23-karat gold leaf.',
     highlights: ['Original 500 m mine shaft', 'Templo de San Cayetano with three gold altarpieces', 'Guided tours into the mining tunnels', 'Old miners\' tools and explosives exhibition'],
     ticket: {
-      url: 'https://www.visitguanajuato.mx/',
-      operator: 'Visit Guanajuato',
-      note: 'Guided tours · ticket office on site'
+      url: 'https://valenciana1791.webnode.es/',
+      operator: 'Museo Mina Valenciana 1791',
+      note: 'Guided tours · Fri–Sat 10–18h, Sun 10–17h · $50 MXN general'
     }
   },
   {
