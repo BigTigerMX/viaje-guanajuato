@@ -188,7 +188,7 @@ const SUBJECTS = [
     placeIds: [9, 10],
     tagline: 'The science behind the history',
     body: '<p>Analysis of chemical and biological processes present in the visited sites: <strong>oxidation of metal structures</strong>, local biodiversity, and the mineral composition of the silver mines of Guanajuato.</p>',
-    tags: ['Documentary video', '5–8 min', 'Scientific journal'],
+    tags: ['Documentary video', '5–8 min', '4 scientific journals'],
     status: 'ready',
     content: `
       <h4>Documentary video</h4>
@@ -208,6 +208,40 @@ const SUBJECTS = [
         <li><strong>Biological diversity:</strong> flora and fruits observed in Mercado Hidalgo, linking the regional agriculture to the local biome.</li>
         <li><strong>Field method:</strong> direct observation, photographic record and brief on-site interviews.</li>
       </ul>
+      <h4>Scientific journals (Bitácoras)</h4>
+      <p>Four field journals written after the trip, each with introduction, development, evidence, conclusion and APA references. They expand on the topics shown in the documentary.</p>
+      <div class="bitacoras">
+        <div class="bitacoras__head">
+          <span class="bitacoras__label">Deliverable · 4 entries · APA format</span>
+          <a class="bitacoras__dl" href="assets/docs/bitacoras-cientificas.docx" download>Download .docx</a>
+        </div>
+        <div class="bitacoras__grid">
+          <article class="bitacora-card">
+            <span class="bitacora-card__num">01</span>
+            <h5 class="bitacora-card__title">Oxidación de Estructuras Metálicas</h5>
+            <p class="bitacora-card__body">Iron reacting with oxygen and moisture: how corrosion forms reddish iron-oxide patches and weakens the metalwork observed on site.</p>
+            <div class="bitacora-card__meta"><strong>3</strong> APA refs · Callister · Jones · Smith</div>
+          </article>
+          <article class="bitacora-card">
+            <span class="bitacora-card__num">02</span>
+            <h5 class="bitacora-card__title">Conservación de las Momias de Guanajuato</h5>
+            <p class="bitacora-card__body">Natural mummification at the Santa Paula cemetery — low humidity, ventilation and mineral soil — and how the museum preserves the bodies today.</p>
+            <div class="bitacora-card__meta"><strong>3</strong> APA refs · Museo · Tiesler · SECTUR</div>
+          </article>
+          <article class="bitacora-card">
+            <span class="bitacora-card__num">03</span>
+            <h5 class="bitacora-card__title">Biodiversidad Local</h5>
+            <p class="bitacora-card__body">Plants, birds and insects of the regional ecosystem; pressures from pollution, deforestation and urban growth, with notes on conservation.</p>
+            <div class="bitacora-card__meta"><strong>3</strong> APA refs · CONABIO · SEMARNAT · Odum</div>
+          </article>
+          <article class="bitacora-card">
+            <span class="bitacora-card__num">04</span>
+            <h5 class="bitacora-card__title">Minerales y Composición Química</h5>
+            <p class="bitacora-card__body">Silicates, oxides, carbonates and sulfides — quartz, calcite and hematite — linked to the geology of the Sierra de Guanajuato and the silver mines.</p>
+            <div class="bitacora-card__meta"><strong>2</strong> APA refs · Klein &amp; Dutrow · Tarbuck &amp; Lutgens</div>
+          </article>
+        </div>
+      </div>
     `
   },
 
