@@ -3079,3 +3079,343 @@ body {
   color: var(--amber-deep);
   font-weight: 600;
 }
+
+/* =========================================================
+   v10.4 · SUN GLYPH · 8-point sun, uniform across the site
+   ========================================================= */
+:root {
+  /* Sol 8 puntas + halo amber + centro paper. Data URI compacto. */
+  --sun-glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 2 L36 21 L54 11 L43 28 L62 32 L43 36 L54 53 L36 43 L32 62 L28 43 L10 53 L21 36 L2 32 L21 28 L10 11 L28 21 Z' fill='%23D73220'/><circle cx='32' cy='32' r='10' fill='%23F9F3CC'/><circle cx='32' cy='32' r='5' fill='%23B37D38'/></svg>");
+  --sun-glyph-amber: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 2 L36 21 L54 11 L43 28 L62 32 L43 36 L54 53 L36 43 L32 62 L28 43 L10 53 L21 36 L2 32 L21 28 L10 11 L28 21 Z' fill='%23B37D38'/><circle cx='32' cy='32' r='10' fill='%23F9F3CC'/><circle cx='32' cy='32' r='5' fill='%23D73220'/></svg>");
+  --sun-glyph-ink: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 2 L36 21 L54 11 L43 28 L62 32 L43 36 L54 53 L36 43 L32 62 L28 43 L10 53 L21 36 L2 32 L21 28 L10 11 L28 21 Z' fill='%232A1812'/><circle cx='32' cy='32' r='10' fill='%23F9F3CC'/><circle cx='32' cy='32' r='5' fill='%23D73220'/></svg>");
+
+  --bugambilia: #C72C8C;
+}
+
+/* Universal class — usable anywhere a sun is needed */
+.sun-glyph {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background: var(--sun-glyph) center / contain no-repeat;
+  transition: transform .8s var(--ease);
+  vertical-align: middle;
+}
+
+/* ─── PLACE CARD · sol grande reemplaza badge num ─── */
+.place-card__num {
+  /* Override v8 styles */
+  background: transparent !important;
+  padding: 0 !important;
+  width: 54px;
+  height: 54px;
+  top: .65rem !important;
+  left: .65rem !important;
+  font-size: 0;
+  letter-spacing: 0;
+  color: transparent;
+  filter: drop-shadow(0 4px 10px rgba(42, 24, 18, .35));
+  transition: transform .8s var(--ease), filter .3s var(--ease);
+}
+.place-card__num::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--sun-glyph) center / contain no-repeat;
+  transition: transform .8s var(--ease);
+}
+.place-card[data-place-card="1"] .place-card__num::before,
+.place-card[data-place-card="2"] .place-card__num::before,
+.place-card[data-place-card="3"] .place-card__num::before,
+.place-card[data-place-card="4"] .place-card__num::before {
+  background-image: var(--sun-glyph-amber);
+}
+.place-card:hover .place-card__num {
+  filter: drop-shadow(0 0 18px rgba(199, 44, 140, .55))
+          drop-shadow(0 6px 14px rgba(215, 50, 32, .45));
+}
+.place-card:hover .place-card__num::before {
+  transform: rotate(180deg);
+}
+
+/* ─── SUBJECT · sol grande lateral reemplaza num serif ─── */
+.subject__num {
+  position: relative;
+  width: clamp(2.8rem, 5vw, 4.2rem);
+  height: clamp(2.8rem, 5vw, 4.2rem);
+  font-size: 0 !important;
+  color: transparent !important;
+  background: var(--sun-glyph) center / contain no-repeat;
+  filter: drop-shadow(0 6px 14px rgba(168, 32, 15, .25));
+  transition: transform 1.2s var(--ease), filter .3s;
+  will-change: transform;
+}
+.subject:hover .subject__num,
+.subject-row:hover .subject__num {
+  transform: rotate(180deg) scale(1.05);
+  filter: drop-shadow(0 0 22px rgba(199, 44, 140, .5))
+          drop-shadow(0 8px 18px rgba(168, 32, 15, .35));
+}
+
+/* ─── MAP LIST ITEM · sol pequeño en grid cell ─── */
+.map-list-item__num {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  margin: 0 auto;
+  font-size: 0 !important;
+  color: transparent !important;
+  background: var(--sun-glyph) center / contain no-repeat;
+  transition: transform .7s var(--ease), filter .3s;
+  filter: drop-shadow(0 2px 6px rgba(168, 32, 15, .25));
+}
+.map-list-item:hover .map-list-item__num,
+.map-list-item.is-active .map-list-item__num {
+  transform: rotate(180deg);
+  filter: drop-shadow(0 0 12px rgba(199, 44, 140, .55));
+}
+
+/* ─── MARKER PIN · sol dentro del círculo ─── */
+.leaflet-marker-pin__circle {
+  font-size: 0 !important;
+  color: transparent !important;
+  background-image: var(--sun-glyph), linear-gradient(135deg, var(--terracotta-l) 0%, var(--terracotta-d) 100%) !important;
+  background-position: center, center !important;
+  background-size: 78%, cover !important;
+  background-repeat: no-repeat, no-repeat !important;
+  transition: transform .35s var(--ease), background-image .35s, box-shadow .35s, filter .35s;
+}
+.leaflet-marker-pin.dolores .leaflet-marker-pin__circle {
+  background-image: var(--sun-glyph-amber), linear-gradient(135deg, var(--amber) 0%, var(--amber-deep) 100%) !important;
+}
+.leaflet-marker-pin.is-active .leaflet-marker-pin__circle {
+  background-image: var(--sun-glyph), linear-gradient(135deg, var(--ink-soft) 0%, var(--ink) 100%) !important;
+  filter: drop-shadow(0 0 14px rgba(199, 44, 140, .65));
+}
+.leaflet-marker-pin:hover .leaflet-marker-pin__circle {
+  filter: drop-shadow(0 0 10px rgba(199, 44, 140, .55));
+}
+/* Sun rotation on the marker — fights with scale from pinBounce, so apply on inner pseudo */
+.leaflet-marker-pin__circle::after {
+  content: "";
+  position: absolute;
+  inset: 11%;
+  background: inherit;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* =========================================================
+   v10.4 · PSEUDO-3D · perspective + tilt + parallax depth
+   ========================================================= */
+.hero {
+  perspective: 1200px;
+  perspective-origin: 50% 30%;
+}
+.hero__media {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.hero__content {
+  transform-style: preserve-3d;
+}
+/* Bumps the title up in 3D space on mouse-driven parallax (set via JS data-tilt-depth) */
+.hero__title { transform: translateZ(40px); }
+.hero__lead  { transform: translateZ(20px); }
+.hero__stamp { transform: translateZ(60px); }
+
+/* Card tilt — applied via JS (sets --rx and --ry from mouse position) */
+.place-card,
+.gal {
+  transform-style: preserve-3d;
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
+  transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .3s;
+  will-change: transform;
+}
+.place-card.is-tilting,
+.gal.is-tilting {
+  transition: transform .12s linear, box-shadow .35s var(--ease);
+}
+.place-card .place-card__title,
+.place-card .place-card__num {
+  transform: translateZ(28px);
+}
+.place-card .place-card__city {
+  transform: translateZ(20px);
+}
+
+/* =========================================================
+   v10.4 · BLOBS · radial gradients animated (atrás de hero/intro)
+   ========================================================= */
+.bg-blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  opacity: .55;
+  mix-blend-mode: multiply;
+  z-index: 0;
+  animation: blobFloat 22s ease-in-out infinite;
+}
+.bg-blob--terra {
+  width: 40vw;
+  height: 40vw;
+  background: radial-gradient(circle, rgba(215, 50, 32, .35), transparent 65%);
+}
+.bg-blob--amber {
+  width: 35vw;
+  height: 35vw;
+  background: radial-gradient(circle, rgba(179, 125, 56, .35), transparent 65%);
+  animation-duration: 28s;
+  animation-direction: reverse;
+}
+.bg-blob--bug {
+  width: 30vw;
+  height: 30vw;
+  background: radial-gradient(circle, rgba(199, 44, 140, .22), transparent 65%);
+  animation-duration: 34s;
+  animation-delay: -8s;
+}
+@keyframes blobFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25%      { transform: translate(6vw, -4vh) scale(1.08); }
+  50%      { transform: translate(-3vw, 5vh) scale(.94); }
+  75%      { transform: translate(4vw, 2vh) scale(1.04); }
+}
+
+/* =========================================================
+   v10.4 · CONFETTI · CSS burst at marker click
+   ========================================================= */
+.confetti-burst {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+.confetti-burst i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 1px;
+  transform-origin: 50% 50%;
+  animation: confettiOut .9s cubic-bezier(.2, .8, .2, 1) forwards;
+}
+.confetti-burst i:nth-child(1)  { background: var(--terracotta);   --tx:  60px; --ty: -50px; --rot: 240deg; }
+.confetti-burst i:nth-child(2)  { background: var(--amber);        --tx: -70px; --ty: -40px; --rot: -200deg; }
+.confetti-burst i:nth-child(3)  { background: var(--bugambilia);   --tx:  30px; --ty: -80px; --rot:  300deg; }
+.confetti-burst i:nth-child(4)  { background: var(--terracotta-d); --tx: -45px; --ty: -75px; --rot: -180deg; }
+.confetti-burst i:nth-child(5)  { background: var(--amber-deep);   --tx:  85px; --ty:  -5px; --rot:  160deg; }
+.confetti-burst i:nth-child(6)  { background: var(--paper);        --tx: -90px; --ty:   5px; --rot: -240deg; border: 1px solid var(--ink); }
+.confetti-burst i:nth-child(7)  { background: var(--bugambilia);   --tx:  20px; --ty:  60px; --rot:  120deg; }
+.confetti-burst i:nth-child(8)  { background: var(--terracotta);   --tx: -55px; --ty:  55px; --rot: -160deg; }
+.confetti-burst i:nth-child(9)  { background: var(--amber);        --tx:   5px; --ty: -95px; --rot:  220deg; }
+.confetti-burst i:nth-child(10) { background: var(--terracotta-l); --tx:  70px; --ty:  25px; --rot: -260deg; }
+.confetti-burst i:nth-child(11) { background: var(--amber-deep);   --tx: -25px; --ty: -65px; --rot:  140deg; }
+.confetti-burst i:nth-child(12) { background: var(--bugambilia);   --tx:  50px; --ty:  70px; --rot: -300deg; }
+@keyframes confettiOut {
+  0%   { transform: translate(-50%, -50%) rotate(0) scale(0); opacity: 0; }
+  20%  { opacity: 1; }
+  100% {
+    transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) rotate(var(--rot)) scale(1);
+    opacity: 0;
+  }
+}
+
+/* =========================================================
+   v10.4 · GLOW · magenta bugambilia hover accent
+   ========================================================= */
+.btn--primary:hover {
+  box-shadow: 0 8px 24px rgba(168, 32, 15, .35),
+              0 0 30px rgba(199, 44, 140, .35);
+}
+.subject__cta:hover {
+  box-shadow: 0 0 20px rgba(199, 44, 140, .4);
+}
+.filter-chip.is-active {
+  box-shadow: 0 4px 14px rgba(199, 44, 140, .25);
+}
+.nav__cta:hover {
+  box-shadow: 0 0 18px rgba(199, 44, 140, .5);
+}
+
+/* =========================================================
+   v10.4 · FOOTER RIBBON · sarape ondulando
+   ========================================================= */
+.footer {
+  position: relative;
+  overflow: hidden;
+}
+.footer::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: -1px;
+  height: 6px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--terracotta) 0 24px,
+    var(--amber) 24px 48px,
+    var(--bugambilia) 48px 72px,
+    var(--ink-soft) 72px 96px
+  );
+  background-size: 96px 6px;
+  animation: ribbonSlide 18s linear infinite;
+}
+@keyframes ribbonSlide {
+  from { background-position: 0 0; }
+  to   { background-position: 96px 0; }
+}
+
+/* =========================================================
+   v10.4 · STAR MARQUEE · sustituir ✦ con sol mini en marquee
+   ========================================================= */
+.marquee__star {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background: var(--sun-glyph) center / contain no-repeat;
+  vertical-align: middle;
+  margin: 0 .8rem;
+  font-size: .85em;
+  color: transparent;
+  animation: starSpin 14s linear infinite;
+}
+@keyframes starSpin {
+  from { transform: rotate(0); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Subject number used inside .modal also gets the glyph treatment as a small badge */
+.modal__num {
+  display: inline-flex !important;
+  align-items: center;
+  gap: .5rem;
+}
+.modal__num::before {
+  content: "";
+  display: inline-block;
+  width: 1.2em;
+  height: 1.2em;
+  background: var(--sun-glyph) center / contain no-repeat;
+  animation: starSpin 12s linear infinite;
+}
+
+/* Place-card data-place-card 5-11 (Guanajuato) keep the default red sun (set above). */
+
+/* =========================================================
+   v10.4 · REDUCED MOTION · cortar todas las animaciones extras
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .sun-glyph,
+  .place-card__num::before,
+  .subject__num,
+  .map-list-item__num,
+  .leaflet-marker-pin__circle,
+  .marquee__star,
+  .modal__num::before { animation: none !important; transition: none !important; }
+  .bg-blob { animation: none !important; }
+  .footer::after { animation: none !important; }
+  .place-card, .subject__media, .gal { transform: none !important; }
+}
+

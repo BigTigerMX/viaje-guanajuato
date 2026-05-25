@@ -637,10 +637,25 @@ function initMap() {
       setActive(p.id);
       marker.openPopup();
       map.flyTo(p.coords, Math.max(map.getZoom(), 15), { duration: 1 });
+      burstConfettiAtMarker(p.id);
     });
 
     markers[p.id] = marker;
   });
+}
+
+/* ============= CONFETTI BURST AT MARKER ============= */
+function burstConfettiAtMarker(id) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const pin = document.querySelector(`.leaflet-marker-pin[data-id="${id}"]`);
+  if (!pin) return;
+  const old = pin.querySelector('.confetti-burst');
+  if (old) old.remove();
+  const burst = document.createElement('div');
+  burst.className = 'confetti-burst';
+  burst.innerHTML = '<i></i>'.repeat(12);
+  pin.appendChild(burst);
+  setTimeout(() => burst.remove(), 1000);
 }
 
 function setActive(id) {
@@ -839,6 +854,56 @@ function setupTilt() {
       el.classList.remove('is-tilting');
     });
   });
+}
+
+/* ============= CARD TILT (place-cards + gallery) ============= */
+function setupCardTilt() {
+  if (window.matchMedia('(hover: none)').matches) return;
+  document.querySelectorAll('.place-card, .gal').forEach(el => {
+    el.addEventListener('mousemove', e => {
+      const r = el.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width;
+      const y = (e.clientY - r.top) / r.height;
+      el.style.setProperty('--ry', `${(x - 0.5) * 8}deg`);
+      el.style.setProperty('--rx', `${(0.5 - y) * 8}deg`);
+      el.classList.add('is-tilting');
+    });
+    el.addEventListener('mouseleave', () => {
+      el.style.setProperty('--rx', '0deg');
+      el.style.setProperty('--ry', '0deg');
+      el.classList.remove('is-tilting');
+    });
+  });
+}
+
+/* ============= HERO PARALLAX (mouse-driven 3D) ============= */
+function setupHeroParallax() {
+  if (window.matchMedia('(hover: none) or (prefers-reduced-motion: reduce)').matches) return;
+  const hero = document.querySelector('.hero');
+  if (!hero) return;
+  let raf = null, tx = 0, ty = 0, cx = 0, cy = 0;
+  hero.addEventListener('mousemove', e => {
+    const r = hero.getBoundingClientRect();
+    tx = ((e.clientX - r.left) / r.width  - 0.5);
+    ty = ((e.clientY - r.top)  / r.height - 0.5);
+    if (!raf) raf = requestAnimationFrame(tick);
+  });
+  hero.addEventListener('mouseleave', () => { tx = 0; ty = 0; });
+  function tick() {
+    cx += (tx - cx) * 0.08;
+    cy += (ty - cy) * 0.08;
+    const media = hero.querySelector('.hero__media');
+    const content = hero.querySelector('.hero__content');
+    const stamp = hero.querySelector('.hero__stamp');
+    if (media)   media.style.transform   = `translate3d(${cx * -18}px, ${cy * -10}px, 0) scale(1.04)`;
+    if (content) content.style.transform = `translate3d(${cx *  10}px, ${cy *  6}px, 0)`;
+    if (stamp)   stamp.style.transform   = `translate3d(${cx *  20}px, ${cy * 14}px, 0) rotate(8deg)`;
+    if (Math.abs(tx - cx) > 0.001 || Math.abs(ty - cy) > 0.001) {
+      raf = requestAnimationFrame(tick);
+    } else {
+      raf = null;
+    }
+  }
 }
 
 /* ============= CURSOR ============= */
@@ -1118,6 +1183,8 @@ document.addEventListener('DOMContentLoaded', () => {
   animateCounters();
   setupMagnetic();
   setupTilt();
+  setupCardTilt();
+  setupHeroParallax();
   setupCursor();
   setupRouteDrawOnView();
   setupSidebarHoverPreview();
