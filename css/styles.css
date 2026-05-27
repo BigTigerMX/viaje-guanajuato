@@ -1,45 +1,45 @@
 /* =========================================================
-   JOURNEY TO GUANAJUATO · v12 · Dark Luxury Editorial
+   JOURNEY TO GUANAJUATO · v13 · Blueprint Edition
    Instituto Rembrandt de Querétaro · DA016 · MMXXVI
    ========================================================= */
 
 /* ── TOKENS ─────────────────────────────────────────────── */
 :root {
-  /* Backgrounds — warm navy, not pure black */
-  --bg:     #09090F;
-  --bg-2:   #0D0F1E;
-  --bg-3:   #111428;
-  --bg-4:   #171B34;
-  --glass:  rgba(9,9,15,.82);
+  /* Backgrounds — blueprint navy (visible blue, not black) */
+  --bg:     #06101e;
+  --bg-2:   #091828;
+  --bg-3:   #0d2038;
+  --bg-4:   #112848;
+  --glass:  rgba(6,16,30,.88);
 
-  /* Text */
-  --tx:     #EDE6D8;
-  --tx-2:   #968E82;
-  --tx-3:   #524A42;
+  /* Text — cool blue-white */
+  --tx:     #cce8ff;
+  --tx-2:   #6898c0;
+  --tx-3:   #3a5870;
 
-  /* Gold — primary, more vibrant */
-  --gold:   #C8992E;
-  --gold-l: #E4B84A;
-  --gold-d: #9A7018;
-  --gold-a: rgba(200,153,46,.13);
-  --gold-b: rgba(200,153,46,.26);
+  /* Gold/Amber — warm accent */
+  --gold:   #f0a020;
+  --gold-l: #ffbe40;
+  --gold-d: #c07810;
+  --gold-a: rgba(240,160,32,.15);
+  --gold-b: rgba(240,160,32,.30);
 
-  /* Coral — secondary, richer */
-  --coral:   #D94D28;
-  --coral-l: #F0673E;
-  --coral-d: #A83418;
-  --coral-a: rgba(217,77,40,.13);
+  /* Coral — kept, pops on navy */
+  --coral:   #ff5a35;
+  --coral-l: #ff7c55;
+  --coral-d: #cc3a18;
+  --coral-a: rgba(255,90,53,.15);
 
-  /* Teal — tertiary, vivid */
-  --teal:   #28A892;
-  --teal-l: #38C8AE;
-  --teal-a: rgba(40,168,146,.13);
+  /* Cyan — blueprint primary (replaces teal) */
+  --teal:   #00c8f0;
+  --teal-l: #20e0ff;
+  --teal-a: rgba(0,200,240,.15);
 
-  /* Borders */
-  --b1: rgba(237,230,216,.055);
-  --b2: rgba(237,230,216,.10);
-  --b3: rgba(237,230,216,.18);
-  --b4: rgba(237,230,216,.28);
+  /* Borders — cyan tinted */
+  --b1: rgba(0,180,255,.08);
+  --b2: rgba(0,180,255,.14);
+  --b3: rgba(0,180,255,.24);
+  --b4: rgba(0,180,255,.38);
 
   /* Type */
   --serif: 'Cormorant Garamond', 'Palatino Linotype', Georgia, serif;
@@ -136,7 +136,7 @@ section { position: relative; padding: clamp(5rem, 9vw, 10rem) 0; }
   color: var(--tx);
   margin-top: 1.4rem;
 }
-.section-title em { font-style: italic; color: var(--gold-l); }
+.section-title em { font-style: italic; color: var(--teal-l); }
 .section-lead {
   font-size: var(--lg);
   color: var(--tx-2);
@@ -145,6 +145,20 @@ section { position: relative; padding: clamp(5rem, 9vw, 10rem) 0; }
   margin-top: 1.4rem;
 }
 .italic { font-style: italic; }
+
+/* ── BLUEPRINT GRID ─────────────────────────────────────── */
+.bp-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  background-image:
+    linear-gradient(rgba(0,180,255,.052) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,180,255,.052) 1px, transparent 1px),
+    linear-gradient(rgba(0,180,255,.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,180,255,.022) 1px, transparent 1px);
+  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+}
 
 /* ── GRAIN ──────────────────────────────────────────────── */
 .grain {
@@ -165,9 +179,9 @@ section { position: relative; padding: clamp(5rem, 9vw, 10rem) 0; }
   width: 80vmax; height: 80vmax;
   border-radius: 50%;
   background: radial-gradient(circle at var(--gx,50%) var(--gy,40%),
-    rgba(200,153,46,.22) 0%,
-    rgba(200,153,46,.09) 38%,
-    transparent 65%);
+    rgba(0,200,240,.24) 0%,
+    rgba(0,200,240,.10) 40%,
+    transparent 66%);
   pointer-events: none; z-index: 0;
   animation: ambientA 14s ease-in-out infinite alternate;
 }
@@ -178,8 +192,8 @@ section { position: relative; padding: clamp(5rem, 9vw, 10rem) 0; }
   width: 65vmax; height: 65vmax;
   border-radius: 50%;
   background: radial-gradient(circle,
-    rgba(217,77,40,.20) 0%,
-    rgba(217,77,40,.08) 40%,
+    rgba(240,160,32,.22) 0%,
+    rgba(240,160,32,.08) 42%,
     transparent 68%);
   pointer-events: none; z-index: 0;
   animation: ambientB 18s ease-in-out infinite alternate;
@@ -278,9 +292,9 @@ section { position: relative; padding: clamp(5rem, 9vw, 10rem) 0; }
   border-bottom: 1px solid transparent;
 }
 .nav.is-scrolled {
-  background: rgba(7,9,14,.88);
-  backdrop-filter: blur(22px) saturate(160%);
-  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  background: rgba(6,16,30,.92);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
   border-bottom-color: var(--b1);
   padding-top: .85rem;
   padding-bottom: .85rem;
@@ -394,7 +408,7 @@ section { position: relative; padding: clamp(5rem, 9vw, 10rem) 0; }
   display: flex; flex-direction: column; justify-content: flex-end;
   padding: clamp(5rem, 12vw, 11rem) clamp(2rem, 4vw, 4rem) 3.5rem clamp(2rem, 7vw, 8rem);
   position: relative; z-index: 1;
-  background: radial-gradient(ellipse 95% 90% at 20% 70%, rgba(9,9,15,.90) 0%, rgba(9,9,15,.58) 48%, transparent 72%);
+  background: radial-gradient(ellipse 95% 90% at 20% 70%, rgba(6,16,30,.96) 0%, rgba(6,16,30,.68) 50%, transparent 74%);
 }
 .hero__eyebrow {
   display: flex; align-items: center; gap: 1rem;
@@ -425,12 +439,17 @@ section { position: relative; padding: clamp(5rem, 9vw, 10rem) 0; }
 .hero__title-main {
   font-weight: 300; font-size: var(--4xl);
   letter-spacing: -.03em;
-  filter: drop-shadow(0 0 28px rgba(200,153,46,.55)) drop-shadow(0 0 60px rgba(200,153,46,.20));
+  filter: drop-shadow(0 0 32px rgba(0,200,240,.55)) drop-shadow(0 0 70px rgba(240,160,32,.22));
 }
 .hero__title-main em {
   font-style: italic; color: var(--tx);
-  background: linear-gradient(135deg, var(--gold-l) 0%, var(--tx) 40%, var(--gold-l) 75%, var(--gold) 100%);
-  background-size: 200% auto;
+  background: linear-gradient(135deg,
+    var(--teal-l) 0%,
+    #e8f8ff 22%,
+    var(--gold-l) 50%,
+    #e8f8ff 76%,
+    var(--teal-l) 100%);
+  background-size: 220% auto;
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: shimmer 5s linear infinite;
@@ -440,17 +459,14 @@ section { position: relative; padding: clamp(5rem, 9vw, 10rem) 0; }
   100% { background-position: -200% center; }
 }
 
-/* Character-by-character reveal */
-.hero__title-main .char {
-  display: inline-block;
-  opacity: 0;
-  transform: translateY(60%) skewY(8deg);
-  transition: opacity .55s var(--ease), transform .55s var(--ease);
-  transition-delay: calc(var(--i) * 0.045s + 0.5s);
-}
-.chars-ready .char {
-  opacity: 1;
-  transform: translateY(0) skewY(0deg);
+/* Hero reticle — blueprint targeting circle on the visual side */
+.hero__reticle {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
 }
 .hero__lead {
   font-size: var(--lg); color: var(--tx-2); line-height: 1.62;

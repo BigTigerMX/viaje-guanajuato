@@ -23,6 +23,9 @@
 <!-- GRAIN OVERLAY -->
 <div class="grain" aria-hidden="true"></div>
 
+<!-- BLUEPRINT GRID -->
+<div class="bp-grid" aria-hidden="true"></div>
+
 <!-- CURSOR -->
 <div class="cursor" aria-hidden="true">
   <div class="cursor__dot"></div>
@@ -88,6 +91,21 @@
   </div>
 
   <div class="hero__visual">
+    <!-- Blueprint reticle circles drawn by anime.js -->
+    <svg class="hero__reticle" viewBox="0 0 500 560" fill="none" aria-hidden="true">
+      <circle class="r-spin"  cx="250" cy="280" r="245" stroke="rgba(0,200,240,0.14)" stroke-width="1" stroke-dasharray="6 10"/>
+      <circle class="r-outer" cx="250" cy="280" r="215" stroke="rgba(0,200,240,0.28)" stroke-width="1.4"/>
+      <circle class="r-mid"   cx="250" cy="280" r="158" stroke="rgba(0,200,240,0.14)" stroke-width="1"/>
+      <circle class="r-center" cx="250" cy="280" r="16" stroke="rgba(240,160,32,0.75)" stroke-width="2.2"/>
+      <line class="r-line" x1="250" y1="8"   x2="250" y2="90"  stroke="rgba(0,200,240,0.42)" stroke-width="1.3"/>
+      <line class="r-line" x1="250" y1="470" x2="250" y2="552" stroke="rgba(0,200,240,0.42)" stroke-width="1.3"/>
+      <line class="r-line" x1="8"   y1="280" x2="90"  y2="280" stroke="rgba(0,200,240,0.42)" stroke-width="1.3"/>
+      <line class="r-line" x1="410" y1="280" x2="492" y2="280" stroke="rgba(0,200,240,0.42)" stroke-width="1.3"/>
+      <path class="r-line" d="M14 58 L14 14 L58 14" stroke="rgba(0,200,240,0.55)" stroke-width="2" fill="none"/>
+      <path class="r-line" d="M442 14 L486 14 L486 58" stroke="rgba(0,200,240,0.55)" stroke-width="2" fill="none"/>
+      <path class="r-line" d="M14 502 L14 546 L58 546" stroke="rgba(0,200,240,0.55)" stroke-width="2" fill="none"/>
+      <path class="r-line" d="M442 546 L486 546 L486 502" stroke="rgba(0,200,240,0.55)" stroke-width="2" fill="none"/>
+    </svg>
     <div class="hero__frame" id="heroFrame">
       <img src="assets/img/gto-panorama.jpg" alt="Panoramic view of Guanajuato" class="hero__img" id="heroImg" fetchpriority="high">
       <div class="hero__frame-veil"></div>
@@ -408,6 +426,7 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://unpkg.com/animejs@3.2.2/lib/anime.min.js"></script>
 <script src="js/main.js" defer></script>
 </body>
 </html>

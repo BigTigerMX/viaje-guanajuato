@@ -779,38 +779,89 @@ function splitTextWords() {
 }
 splitTextWords();
 
-/* ============= REVEALS ============= */
+/* ============= REVEALS (anime.js spring physics) ============= */
 function triggerReveals() {
+  // Section-level observer: staggered card bursts
+  const sectionIo = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const sec = e.target;
+      // Stagger place-cards or subjects if this section has them
+      const cards = sec.querySelectorAll('.place-card');
+      const subjects = sec.querySelectorAll('.subject');
+      if (cards.length && typeof anime !== 'undefined') {
+        anime({
+          targets: cards, opacity: [0, 1], translateY: [45, 0], scale: [0.96, 1],
+          duration: 650, delay: anime.stagger(75), easing: 'spring(1, 78, 12, 0)',
+        });
+      }
+      if (subjects.length && typeof anime !== 'undefined') {
+        anime({
+          targets: subjects, opacity: [0, 1], translateX: [-35, 0],
+          duration: 700, delay: anime.stagger(100), easing: 'easeOutExpo',
+        });
+      }
+      sectionIo.unobserve(sec);
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.places, .subjects').forEach(s => sectionIo.observe(s));
+
+  // Element-level observer: individual .rv elements
   const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      if (typeof anime !== 'undefined') {
+        anime({
+          targets: e.target,
+          opacity: [0, 1], translateY: [32, 0],
+          duration: 700, easing: 'spring(1, 80, 12, 0)',
+        });
+      } else {
+        e.target.classList.add('is-in');
+      }
+      io.unobserve(e.target);
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.rv, [data-split]').forEach(el => io.observe(el));
+
+  // Section title wipe
+  const titleIo = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (e.isIntersecting) {
         e.target.classList.add('is-in');
-        io.unobserve(e.target);
+        titleIo.unobserve(e.target);
       }
     });
-  }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
-  document.querySelectorAll('.rv, [data-split], .hero__lead').forEach(el => io.observe(el));
+  }, { threshold: 0.2 });
+  document.querySelectorAll('.section-title').forEach(el => titleIo.observe(el));
 }
 
-/* ============= COUNTERS ============= */
+/* ============= COUNTERS (anime.js) ============= */
 function animateCounters() {
   const counters = document.querySelectorAll('[data-count]');
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => {
-      if (e.isIntersecting) {
-        const el = e.target;
-        const target = +el.dataset.count;
-        const dur = 1500;
-        const start = performance.now();
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const target = +el.dataset.count;
+      if (typeof anime !== 'undefined') {
+        anime({
+          targets: el,
+          innerHTML: [0, target],
+          round: 1,
+          duration: 2000,
+          easing: 'easeOutExpo',
+        });
+      } else {
+        const dur = 1500, start = performance.now();
         const tick = (now) => {
           const t = Math.min((now - start) / dur, 1);
-          const eased = 1 - Math.pow(1 - t, 3);
-          el.textContent = Math.round(target * eased);
+          el.textContent = Math.round(target * (1 - Math.pow(1 - t, 3)));
           if (t < 1) requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);
-        io.unobserve(el);
       }
+      io.unobserve(el);
     });
   }, { threshold: 0.4 });
   counters.forEach(c => io.observe(c));
@@ -1192,12 +1243,9 @@ function initHero3D() {
   resize();
   window.addEventListener('resize', resize, { passive: true });
 
-  // Vivid palette: gold × 3, coral × 2, teal × 1, warm-white × 1
+  // Single gold color for all particles (blueprint amber)
   const palette = [
-    [218, 162,  48], [218, 162,  48], [218, 162,  48],
-    [225,  82,  42], [225,  82,  42],
-    [ 45, 185, 160],
-    [255, 240, 205],
+    [240, 175, 40],
   ];
   const N    = 125;
   const LINK = 190;
@@ -1258,16 +1306,16 @@ function initHero3D() {
       const al = s.life;
       const ratio = s.vy / s.vx;
       const grad = ctx.createLinearGradient(s.x - s.len, s.y - s.len * ratio, s.x, s.y);
-      grad.addColorStop(0,   `rgba(218,162,48,0)`);
-      grad.addColorStop(0.6, `rgba(218,162,48,${al * 0.55})`);
-      grad.addColorStop(1,   `rgba(255,235,160,${al * 0.95})`);
+      grad.addColorStop(0,   `rgba(240,175,40,0)`);
+      grad.addColorStop(0.6, `rgba(240,175,40,${al * 0.55})`);
+      grad.addColorStop(1,   `rgba(255,240,160,${al * 0.95})`);
       ctx.beginPath();
       ctx.moveTo(s.x - s.len, s.y - s.len * ratio);
       ctx.lineTo(s.x, s.y);
       ctx.strokeStyle = grad; ctx.lineWidth = 2.2; ctx.stroke();
       const tipG = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, 14);
-      tipG.addColorStop(0, `rgba(255,245,195,${al})`);
-      tipG.addColorStop(1, `rgba(218,162,48,0)`);
+      tipG.addColorStop(0, `rgba(255,248,200,${al})`);
+      tipG.addColorStop(1, `rgba(240,175,40,0)`);
       ctx.beginPath(); ctx.arc(s.x, s.y, 14, 0, Math.PI * 2); ctx.fillStyle = tipG; ctx.fill();
     }
 
@@ -1279,7 +1327,7 @@ function initHero3D() {
         const d2 = dx * dx + dy * dy;
         if (d2 < LINK * LINK) {
           ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
-          ctx.strokeStyle = `rgba(218,162,48,${(1 - Math.sqrt(d2) / LINK) * 0.18})`;
+          ctx.strokeStyle = `rgba(240,175,40,${(1 - Math.sqrt(d2) / LINK) * 0.20})`;
           ctx.lineWidth = 0.7; ctx.stroke();
         }
       }
@@ -1450,31 +1498,129 @@ function addGeoDeco() {
   });
 }
 
-/* ============= HERO TITLE LETTER ANIMATION ============= */
+/* ============= HERO TITLE + FULL ENTRANCE (anime.js) ============= */
 function animateHeroTitle() {
-  const mainEl = document.querySelector('.hero__title-main em');
-  const topEl  = document.querySelector('.hero__title-top');
-  if (!mainEl || !topEl) return;
+  if (typeof anime === 'undefined') return;
 
-  // Split main title into characters
-  const text = mainEl.textContent;
-  mainEl.innerHTML = text.split('').map((ch, i) =>
-    `<span class="char" style="--i:${i}">${ch === ' ' ? '&nbsp;' : ch}</span>`
-  ).join('');
+  // Pre-hide hero entrance elements
+  anime.set([
+    '.hero__eyebrow', '.hero__title-top', '.hero__title-main',
+    '.hero__lead', '.hero__actions .btn', '.hero__frame',
+    '.hero__meta-item', '.hero__stamp', '.hero__scroll',
+    '.hero__reticle .r-line', '.hero__reticle .r-center',
+  ], { opacity: 0 });
 
-  // Animate top line
-  topEl.style.opacity = '0';
-  topEl.style.transform = 'translateY(20px)';
-  topEl.style.transition = 'opacity .7s ease, transform .7s ease';
-  setTimeout(() => {
-    topEl.style.opacity = '1';
-    topEl.style.transform = 'translateY(0)';
-  }, 200);
+  anime.timeline({ easing: 'easeOutExpo' })
+    // Eyebrow label slides in from left
+    .add({
+      targets: '.hero__eyebrow',
+      opacity: [0, 1], translateX: [-50, 0],
+      duration: 750, delay: 100,
+    })
+    // "Journey to" drops in from top
+    .add({
+      targets: '.hero__title-top',
+      opacity: [0, 1], translateY: [-30, 0],
+      duration: 650,
+    }, '-=500')
+    // "Guanajuato" launches up with spring
+    .add({
+      targets: '.hero__title-main',
+      opacity: [0, 1], translateY: [70, 0], scale: [0.92, 1],
+      duration: 1100,
+      easing: 'spring(1, 75, 10, 0)',
+    }, '-=350')
+    // Lead text fades up
+    .add({
+      targets: '.hero__lead',
+      opacity: [0, 1], translateY: [28, 0],
+      duration: 650,
+    }, '-=600')
+    // Buttons staggered with bounce
+    .add({
+      targets: '.hero__actions .btn',
+      opacity: [0, 1], translateY: [22, 0], scale: [0.88, 1],
+      duration: 550,
+      delay: anime.stagger(100),
+      easing: 'spring(1, 90, 12, 0)',
+    }, '-=400')
+    // Hero frame slides in from right with perspective
+    .add({
+      targets: '.hero__frame',
+      opacity: [0, 1], translateX: [80, 0],
+      duration: 1200,
+      easing: 'spring(1, 52, 8, 0)',
+    }, '-=1300')
+    // Reticle lines snap in
+    .add({
+      targets: '.hero__reticle .r-line',
+      opacity: [0, 1],
+      duration: 350,
+      delay: anime.stagger(45, { start: 0 }),
+      easing: 'easeOutSine',
+    }, '-=800')
+    // Center dot
+    .add({
+      targets: '.hero__reticle .r-center',
+      strokeDashoffset: [anime.setDashoffset, 0],
+      opacity: [0, 1],
+      duration: 500,
+      easing: 'easeOutExpo',
+    }, '-=400')
+    // Meta items appear row by row
+    .add({
+      targets: '.hero__meta-item',
+      opacity: [0, 1], translateY: [14, 0],
+      duration: 380,
+      delay: anime.stagger(65),
+    }, '-=300')
+    // Stamp spins in
+    .add({
+      targets: '.hero__stamp',
+      opacity: [0, 1], scale: [0.4, 1], rotate: ['-45deg', '-12deg'],
+      duration: 900,
+      easing: 'spring(1, 48, 10, 0)',
+    }, '-=200')
+    .add({
+      targets: '.hero__scroll',
+      opacity: [0, 1],
+      duration: 400,
+    }, '-=200');
+}
 
-  // Animate chars with stagger
-  setTimeout(() => {
-    mainEl.closest('.hero__title-main').classList.add('chars-ready');
-  }, 400);
+/* ============= BLUEPRINT RETICLE RINGS (anime.js) ============= */
+function animateReticle() {
+  if (typeof anime === 'undefined') return;
+  // Draw the two main circles
+  anime({
+    targets: '.hero__reticle .r-outer',
+    strokeDashoffset: [anime.setDashoffset, 0],
+    duration: 2800, delay: 600,
+    easing: 'easeInOutSine',
+  });
+  anime({
+    targets: '.hero__reticle .r-mid',
+    strokeDashoffset: [anime.setDashoffset, 0],
+    duration: 2200, delay: 900,
+    easing: 'easeInOutSine',
+  });
+  // Slow infinite rotation of the outer dashed ring
+  anime({
+    targets: '.hero__reticle .r-spin',
+    rotate: [0, 360],
+    duration: 50000, loop: true,
+    easing: 'linear',
+  });
+  // Breathing pulse on the center gold dot
+  anime({
+    targets: '.hero__reticle .r-center',
+    scale: [1, 1.35, 1],
+    opacity: [0.75, 1, 0.75],
+    duration: 2800,
+    loop: true,
+    easing: 'easeInOutSine',
+    delay: 2800,
+  });
 }
 
 /* ============= AMBIENT GLOW PULSE ============= */
@@ -1498,6 +1644,7 @@ function setupAmbientGlow() {
 document.addEventListener('DOMContentLoaded', () => {
   initHero3D();
   addGeoDeco();
+  animateReticle();
   animateHeroTitle();
   setupAmbientGlow();
   initMap();
