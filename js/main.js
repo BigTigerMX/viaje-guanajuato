@@ -573,7 +573,7 @@ function initMap() {
   const bounds = L.latLngBounds(PLACES.map(p => p.coords)).pad(0.15);
   map.fitBounds(bounds);
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager/{z}/{x}/{y}{r}.png', {
     subdomains: 'abcd', maxZoom: 19
   }).addTo(map);
 
@@ -1288,9 +1288,55 @@ function initHero3D() {
   tick();
 }
 
+/* ============= HERO TITLE LETTER ANIMATION ============= */
+function animateHeroTitle() {
+  const mainEl = document.querySelector('.hero__title-main em');
+  const topEl  = document.querySelector('.hero__title-top');
+  if (!mainEl || !topEl) return;
+
+  // Split main title into characters
+  const text = mainEl.textContent;
+  mainEl.innerHTML = text.split('').map((ch, i) =>
+    `<span class="char" style="--i:${i}">${ch === ' ' ? '&nbsp;' : ch}</span>`
+  ).join('');
+
+  // Animate top line
+  topEl.style.opacity = '0';
+  topEl.style.transform = 'translateY(20px)';
+  topEl.style.transition = 'opacity .7s ease, transform .7s ease';
+  setTimeout(() => {
+    topEl.style.opacity = '1';
+    topEl.style.transform = 'translateY(0)';
+  }, 200);
+
+  // Animate chars with stagger
+  setTimeout(() => {
+    mainEl.closest('.hero__title-main').classList.add('chars-ready');
+  }, 400);
+}
+
+/* ============= AMBIENT GLOW PULSE ============= */
+function setupAmbientGlow() {
+  const hero = document.querySelector('.hero');
+  if (!hero) return;
+  // Animate the CSS custom properties for glow position
+  let t = 0;
+  function loop() {
+    t += 0.003;
+    const x = 50 + Math.sin(t) * 12;
+    const y = 40 + Math.cos(t * 0.7) * 10;
+    hero.style.setProperty('--gx', `${x}%`);
+    hero.style.setProperty('--gy', `${y}%`);
+    requestAnimationFrame(loop);
+  }
+  loop();
+}
+
 /* ============= INIT ============= */
 document.addEventListener('DOMContentLoaded', () => {
   initHero3D();
+  animateHeroTitle();
+  setupAmbientGlow();
   initMap();
   triggerReveals();
   animateCounters();
