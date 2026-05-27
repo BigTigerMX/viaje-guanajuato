@@ -11,8 +11,8 @@ function qrUrl(targetUrl, size = 220) {
   const params = new URLSearchParams({
     size: `${size}x${size}`,
     data: targetUrl,
-    color: '2A1812',
-    bgcolor: 'F9F3CC',
+    color: 'E3DDD5',
+    bgcolor: '171A22',
     qzone: '2',
     margin: '0',
     format: 'svg'
@@ -573,7 +573,7 @@ function initMap() {
   const bounds = L.latLngBounds(PLACES.map(p => p.coords)).pad(0.15);
   map.fitBounds(bounds);
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     subdomains: 'abcd', maxZoom: 19
   }).addTo(map);
 
@@ -584,13 +584,13 @@ function initMap() {
   const guanajuatoCoords = PLACES.filter(p => p.city === 'Guanajuato').map(p => p.coords);
 
   if (doloresCoords.length > 1) {
-    routeLines.dolores = L.polyline(doloresCoords, { color: '#B37D38', weight: 3, opacity: 0.9, smoothFactor: 1.2, className: 'route-line route-line--dolores' }).addTo(map);
+    routeLines.dolores = L.polyline(doloresCoords, { color: '#C49A3C', weight: 2.5, opacity: 0.85, smoothFactor: 1.2, className: 'route-line route-line--dolores' }).addTo(map);
   }
   if (guanajuatoCoords.length > 1) {
-    routeLines.gto = L.polyline(guanajuatoCoords, { color: '#D73220', weight: 3, opacity: 0.9, smoothFactor: 1.2, className: 'route-line route-line--gto' }).addTo(map);
+    routeLines.gto = L.polyline(guanajuatoCoords, { color: '#E05835', weight: 2.5, opacity: 0.85, smoothFactor: 1.2, className: 'route-line route-line--gto' }).addTo(map);
   }
   routeLines.link = L.polyline([doloresCoords[doloresCoords.length - 1], guanajuatoCoords[0]], {
-    color: '#684037', weight: 1.5, opacity: 0.55, dashArray: '2 8', smoothFactor: 1, className: 'route-line route-line--link'
+    color: '#4A4642', weight: 1.5, opacity: 0.5, dashArray: '2 8', smoothFactor: 1, className: 'route-line route-line--link'
   }).addTo(map);
 
   // Pre-set the solid routes to the "undrawn" state for the draw-in animation

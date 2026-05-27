@@ -12,7 +12,8 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,300;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="assets/img/gto-panorama.jpg" fetchpriority="high">
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 
@@ -20,42 +21,10 @@
 </head>
 <body>
 
-<!-- ═══════════════ BG FX · Aurora mexicana ═══════════════ -->
+<!-- ═══════════════ BG FX ═══════════════ -->
 <div class="bg-fx" aria-hidden="true">
-  <div class="aurora">
-    <div class="aurora__blob aurora__blob--1"></div>
-    <div class="aurora__blob aurora__blob--2"></div>
-    <div class="aurora__blob aurora__blob--3"></div>
-    <div class="aurora__blob aurora__blob--4"></div>
-    <div class="aurora__blob aurora__blob--5"></div>
-    <div class="aurora__blob aurora__blob--6"></div>
-    <div class="aurora__blob aurora__blob--7"></div>
-    <div class="aurora__blob aurora__blob--8"></div>
-  </div>
-  <!-- Conic sunburst rotating slowly behind everything -->
-  <div class="bg-sunburst"></div>
-  <!-- Diagonal light streaks crossing -->
-  <div class="bg-streak bg-streak--1"></div>
-  <div class="bg-streak bg-streak--2"></div>
-  <div class="bg-streak bg-streak--3"></div>
-  <!-- Twinkling sparkles -->
-  <div class="bg-sparkles">
-    <i style="top: 8%;  left: 12%; animation-delay: 0s"></i>
-    <i style="top: 18%; left: 78%; animation-delay: -1.2s"></i>
-    <i style="top: 32%; left: 45%; animation-delay: -2.4s"></i>
-    <i style="top: 48%; left: 8%;  animation-delay: -.6s"></i>
-    <i style="top: 58%; left: 88%; animation-delay: -3.1s"></i>
-    <i style="top: 72%; left: 25%; animation-delay: -1.8s"></i>
-    <i style="top: 86%; left: 62%; animation-delay: -2.9s"></i>
-    <i style="top: 110%;left: 18%; animation-delay: -.4s"></i>
-    <i style="top: 130%;left: 72%; animation-delay: -2.1s"></i>
-    <i style="top: 158%;left: 38%; animation-delay: -1.5s"></i>
-    <i style="top: 185%;left: 82%; animation-delay: -3.4s"></i>
-    <i style="top: 215%;left: 14%; animation-delay: -.9s"></i>
-    <i style="top: 245%;left: 56%; animation-delay: -2.6s"></i>
-    <i style="top: 275%;left: 8%;  animation-delay: -1.7s"></i>
-    <i style="top: 290%;left: 78%; animation-delay: -3.0s"></i>
-  </div>
+  <div class="bg-glow"></div>
+  <div class="bg-glow-2"></div>
   <div class="bg-grain"></div>
 </div>
 
@@ -99,7 +68,7 @@
 <!-- ═══════════════ HERO ═══════════════ -->
 <section id="hero" class="hero">
   <div class="hero__media">
-    <img src="assets/img/gto-panorama.jpg" alt="Panoramic view of Guanajuato" class="hero__img" id="heroImg">
+    <img src="assets/img/gto-panorama.jpg" alt="Panoramic view of Guanajuato" class="hero__img" id="heroImg" fetchpriority="high">
     <div class="hero__veil"></div>
   </div>
   <div class="hero__content">
@@ -203,23 +172,23 @@
 <!-- ═══════════════ PHOTO STRIP ═══════════════ -->
 <div class="photo-strip" aria-hidden="true">
   <div class="photo-strip__track">
-    <figure><img src="assets/img/dol-parroquia.jpg" alt=""></figure>
-    <figure><img src="assets/img/gto-teatro.jpg" alt=""></figure>
-    <figure><img src="assets/img/dol-plaza.jpg" alt=""></figure>
-    <figure><img src="assets/img/gto-alhondiga.jpg" alt=""></figure>
-    <figure><img src="assets/img/gto-valenciana.jpg" alt=""></figure>
-    <figure><img src="assets/img/dol-casa-hidalgo.jpg" alt=""></figure>
-    <figure><img src="assets/img/gto-mercado.jpg" alt=""></figure>
-    <figure><img src="assets/img/gto-universidad.jpg" alt=""></figure>
-    <figure><img src="assets/img/dol-carcel.jpg" alt=""></figure>
-    <figure><img src="assets/img/gto-basilica.png" alt=""></figure>
-    <figure><img src="assets/img/gto-pipila.jpg" alt=""></figure>
+    <figure><img src="assets/img/dol-parroquia.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/img/gto-teatro.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/img/dol-plaza.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/img/gto-alhondiga.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/img/gto-valenciana.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/img/dol-casa-hidalgo.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/img/gto-mercado.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/img/gto-universidad.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/img/dol-carcel.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/img/gto-basilica.png" alt="" loading="lazy"></figure>
+    <figure><img src="assets/img/gto-pipila.jpg" alt="" loading="lazy"></figure>
     <!-- duplicate for infinite loop -->
-    <figure><img src="assets/img/dol-parroquia.jpg" alt=""></figure>
-    <figure><img src="assets/img/gto-teatro.jpg" alt=""></figure>
-    <figure><img src="assets/img/dol-plaza.jpg" alt=""></figure>
-    <figure><img src="assets/img/gto-alhondiga.jpg" alt=""></figure>
-    <figure><img src="assets/img/gto-valenciana.jpg" alt=""></figure>
+    <figure><img src="assets/img/dol-parroquia.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/img/gto-teatro.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/img/dol-plaza.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/img/gto-alhondiga.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/img/gto-valenciana.jpg" alt="" loading="lazy"></figure>
   </div>
 </div>
 
