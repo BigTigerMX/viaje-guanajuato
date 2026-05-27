@@ -1623,6 +1623,46 @@ function animateReticle() {
   });
 }
 
+/* ============= EXPEDITION GRID — anime.js stagger (animejs.com signature) ============= */
+function initExpeditionGrid() {
+  const container = document.getElementById('egDots');
+  if (!container || typeof anime === 'undefined') return;
+
+  const COLS = 14, ROWS = 9;
+  const total = COLS * ROWS;
+
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'eg-dot';
+    container.appendChild(dot);
+  }
+
+  const dots = container.querySelectorAll('.eg-dot');
+  let fromCenter = true;
+
+  function pulse() {
+    anime({
+      targets: dots,
+      keyframes: [
+        { scale: 0.18, opacity: 0.05, duration: 300 },
+        { scale: 1.90, opacity: 0.92, duration: 650, easing: 'easeOutQuad' },
+        { scale: 0.18, opacity: 0.05, duration: 800, easing: 'easeInSine' },
+      ],
+      delay: anime.stagger(85, { grid: [COLS, ROWS], from: fromCenter ? 'center' : 'edges' }),
+      easing: 'linear',
+      complete: () => {
+        fromCenter = !fromCenter;
+        setTimeout(pulse, 300);
+      },
+    });
+  }
+
+  const io = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) { pulse(); io.disconnect(); }
+  }, { threshold: 0.12 });
+  io.observe(container);
+}
+
 /* ============= AMBIENT GLOW PULSE ============= */
 function setupAmbientGlow() {
   const hero = document.querySelector('.hero');
@@ -1646,6 +1686,7 @@ document.addEventListener('DOMContentLoaded', () => {
   addGeoDeco();
   animateReticle();
   animateHeroTitle();
+  initExpeditionGrid();
   setupAmbientGlow();
   initMap();
   triggerReveals();

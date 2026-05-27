@@ -679,6 +679,148 @@ section { position: relative; padding: clamp(5rem, 9vw, 10rem) 0; }
   to   { transform: translateX(-50%); }
 }
 
+/* ── EXPEDITION GRID (anime.js signature animation) ─────── */
+.expedition {
+  position: relative;
+  background: var(--bg-3);
+  overflow: hidden;
+  padding: clamp(4rem, 7vw, 8rem) 0 0;
+}
+.expedition::before {
+  content: '';
+  position: absolute; bottom: -20%; left: -8%;
+  width: 60vmax; height: 60vmax; border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,200,240,.09) 0%, transparent 65%);
+  pointer-events: none;
+}
+.expedition::after {
+  content: '';
+  position: absolute; top: -10%; right: -5%;
+  width: 40vmax; height: 40vmax; border-radius: 50%;
+  background: radial-gradient(circle, rgba(240,160,32,.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+.eg-head { margin-bottom: 0; position: relative; z-index: 2; padding-bottom: 0; }
+.eg-stage {
+  position: relative;
+  height: clamp(440px, 55vh, 600px);
+  margin-top: 2.5rem;
+  display: flex;
+  align-items: center;
+}
+/* Dot grid — fills the stage absolutely */
+.eg-dots {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(14, 1fr);
+  align-content: center;
+  justify-items: center;
+  align-items: center;
+  gap: clamp(22px, 2.8vw, 38px);
+  padding: clamp(1.5rem, 3vw, 3rem);
+  z-index: 0;
+}
+.eg-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--teal);
+  opacity: .18;
+  will-change: transform, opacity;
+}
+/* Info overlay on top of dots */
+.eg-overlay {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 0 clamp(1.25rem, 5vw, 3.5rem);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 5rem);
+}
+.eg-card {
+  background: var(--glass);
+  border: 1px solid var(--b2);
+  border-radius: 14px;
+  padding: 1.8rem 2rem;
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+}
+.eg-card-tag {
+  display: block;
+  font-size: .66rem;
+  color: var(--teal-l);
+  letter-spacing: .22em;
+  margin-bottom: .75rem;
+}
+.eg-card-city {
+  font-family: var(--serif);
+  font-size: clamp(1.3rem, 2.4vw, 2rem);
+  font-weight: 300;
+  color: var(--tx);
+  line-height: 1.15;
+  margin-bottom: 1.2rem;
+}
+.eg-card-stops {
+  list-style: none;
+  display: flex; flex-direction: column; gap: .4rem;
+}
+.eg-card-stops li {
+  font-size: var(--xs);
+  color: var(--tx-3);
+  padding-left: 1.1rem;
+  position: relative;
+  letter-spacing: .04em;
+}
+.eg-card-stops li::before {
+  content: '';
+  position: absolute; left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--teal); opacity: .7;
+}
+.eg-card-stops li em { color: var(--tx-2); font-style: italic; }
+/* Center stat */
+.eg-center { text-align: center; flex-shrink: 0; }
+.eg-center-n {
+  font-family: var(--serif);
+  font-size: clamp(5rem, 9vw, 9rem);
+  font-weight: 300; line-height: 1;
+  color: var(--gold-l);
+  filter: drop-shadow(0 0 28px rgba(240,160,32,.55));
+}
+.eg-center-lbl {
+  font-family: var(--sans);
+  font-size: var(--sm); font-weight: 700;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--tx-2); margin-top: .3rem;
+}
+.eg-center-sub {
+  font-size: .60rem;
+  color: var(--teal); letter-spacing: .18em;
+  text-transform: uppercase; margin-top: .4rem;
+}
+.eg-center-badges {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: .4rem; margin-top: 1rem;
+}
+.eg-center-badges span {
+  font-family: var(--mono); font-size: .58rem;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--tx-3);
+  border: 1px solid var(--b2);
+  border-radius: 100px;
+  padding: .3rem .75rem;
+}
+@media (max-width: 860px) {
+  .eg-overlay { grid-template-columns: 1fr; }
+  .eg-center { order: -1; }
+  .eg-stage { height: auto; min-height: 500px; }
+}
+
 /* ── SECTION HEAD ───────────────────────────────────────── */
 .section-head { margin-bottom: clamp(3rem, 6vw, 6rem); }
 
