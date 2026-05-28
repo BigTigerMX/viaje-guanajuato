@@ -789,7 +789,7 @@ function triggerReveals() {
       io.unobserve(e.target);
     });
   }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-  document.querySelectorAll('.rv, [data-split]').forEach(el => io.observe(el));
+  document.querySelectorAll('.rv:not(.place-card):not(.subject):not(.gal), [data-split]').forEach(el => io.observe(el));
 
   // Section title wipe
   const titleIo = new IntersectionObserver(entries => {
@@ -1646,64 +1646,65 @@ function setupAmbientGlow() {
   loop();
 }
 
-/* ============= SCROLL-LINKED REVEALS (animejs.com ScrollObserver style) ============= */
-function setupScrollLinked() {
-  const SEL = '.place-card, .subject, .gal, .stat, .intro__photo, .cta-block__photo';
-  let els = [];
-  let pending = false;
+/* ============= SCROLL REVEAL — section stagger (triggered once on entry) ============= */
+function setupScrollReveal() {
+  if (typeof anime === 'undefined') return;
 
-  function smooth(x) { return x * x * (3 - 2 * x); } // smoothstep
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const sec = e.target;
+      const cards    = sec.querySelectorAll('.place-card');
+      const subjects = sec.querySelectorAll('.subject');
+      const gals     = sec.querySelectorAll('.gal');
+      const photos   = sec.querySelectorAll('.intro__photo, .cta-block__photo');
+      const stats    = sec.querySelectorAll('.stat');
 
-  function run() {
-    pending = false;
-    const vh = window.innerHeight;
-    els.forEach(el => {
-      const top = el.getBoundingClientRect().top;
-      let p, ty = 0, tx = 0, sc = 1;
-
-      if (el.classList.contains('subject')) {
-        p = smooth(Math.max(0, Math.min(1, (vh - top) / (vh * 0.65))));
-        tx = (1 - p) * -45;
-      } else if (el.classList.contains('gal')) {
-        p = smooth(Math.max(0, Math.min(1, (vh - top) / (vh * 0.55))));
-        sc = 0.88 + p * 0.12;
-        ty = (1 - p) * 30;
-      } else if (el.classList.contains('stat')) {
-        p = smooth(Math.max(0, Math.min(1, (vh - top) / (vh * 0.5))));
-        ty = (1 - p) * 22;
-      } else if (el.classList.contains('intro__photo') || el.classList.contains('cta-block__photo')) {
-        p = smooth(Math.max(0, Math.min(1, (vh - top) / (vh * 0.5))));
-        sc = 0.90 + p * 0.10;
-        ty = (1 - p) * 18;
-      } else {
-        p = smooth(Math.max(0, Math.min(1, (vh - top) / (vh * 0.62))));
-        ty = (1 - p) * 55;
+      if (cards.length) {
+        anime({
+          targets: cards,
+          opacity: [0, 1], translateY: [60, 0], scale: [0.94, 1],
+          duration: 700, delay: anime.stagger(80, { start: 0 }),
+          easing: 'spring(1, 72, 12, 0)',
+        });
       }
-
-      if (p >= 0.999) {
-        el.style.opacity = '';
-        el.style.transform = '';
-        el.style.willChange = '';
-      } else {
-        el.style.opacity = p.toFixed(3);
-        el.style.transform = `translateX(${tx.toFixed(1)}px) translateY(${ty.toFixed(1)}px) scale(${sc.toFixed(4)})`;
+      if (subjects.length) {
+        anime({
+          targets: subjects,
+          opacity: [0, 1], translateX: [-50, 0],
+          duration: 750, delay: anime.stagger(90),
+          easing: 'easeOutExpo',
+        });
       }
+      if (gals.length) {
+        anime({
+          targets: gals,
+          opacity: [0, 1], scale: [0.88, 1], translateY: [35, 0],
+          duration: 700, delay: anime.stagger(55),
+          easing: 'spring(1, 70, 12, 0)',
+        });
+      }
+      if (photos.length) {
+        anime({
+          targets: photos,
+          opacity: [0, 1], scale: [0.82, 1],
+          duration: 750, delay: anime.stagger(100, { grid: [2, 2], from: 'center' }),
+          easing: 'spring(1, 62, 10, 0)',
+        });
+      }
+      if (stats.length) {
+        anime({
+          targets: stats,
+          opacity: [0, 1], translateY: [30, 0],
+          duration: 600, delay: anime.stagger(80),
+          easing: 'spring(1, 80, 12, 0)',
+        });
+      }
+      io.unobserve(sec);
     });
-  }
+  }, { threshold: 0.06 });
 
-  function collect() {
-    els = [...document.querySelectorAll(SEL)];
-    els.forEach(el => { el.style.willChange = 'transform, opacity'; });
-    run();
-  }
-
-  function onScroll() {
-    if (!pending) { pending = true; requestAnimationFrame(run); }
-  }
-
-  collect();
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', collect, { passive: true });
+  document.querySelectorAll('.places, .subjects, .gallery, .intro, .cta-block').forEach(s => io.observe(s));
 }
 
 /* ============= INIT ============= */
@@ -1716,7 +1717,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupAmbientGlow();
   initMap();
   triggerReveals();
-  setupScrollLinked();
+  setupScrollReveal();
   animateCounters();
   setupMagnetic();
   setupTilt();
