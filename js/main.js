@@ -791,16 +791,6 @@ function triggerReveals() {
   }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('.rv:not(.place-card):not(.subject):not(.gal), [data-split]').forEach(el => io.observe(el));
 
-  // Section title wipe
-  const titleIo = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('is-in');
-        titleIo.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.2 });
-  document.querySelectorAll('.section-title').forEach(el => titleIo.observe(el));
 }
 
 /* ============= COUNTERS (anime.js) ============= */

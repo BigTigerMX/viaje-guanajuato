@@ -1512,12 +1512,7 @@ section { position: relative; padding: clamp(2.5rem, 5vw, 6rem) 0; }
   to   { width: 28px; }
 }
 
-/* Section title clip-path reveal */
-.section-title {
-  clip-path: inset(0 100% 0 0);
-  transition: clip-path .9s var(--ease), opacity .9s var(--ease), transform .9s var(--ease);
-}
-.section-title.is-in { clip-path: inset(0 0% 0 0); }
+/* Section titles revealed by .rv system — no separate clip-path needed */
 
 /* Word split reveal */
 .word { display: inline-block; overflow: hidden; }
