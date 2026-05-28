@@ -5,45 +5,46 @@
 
 /* ── TOKENS ─────────────────────────────────────────────── */
 :root {
-  /* Backgrounds — near black, neutral */
-  --bg:     #0a0a0e;
-  --bg-2:   #0f0f15;
-  --bg-3:   #141420;
-  --bg-4:   #1a1a28;
-  --glass:  rgba(10,10,14,.90);
+  /* ── PROJECT HAIL MARY palette ──────────────────────────── */
+  /* Deep space — near black, very slight warm tint */
+  --bg:     #06060a;
+  --bg-2:   #0c0c12;
+  --bg-3:   #121218;
+  --bg-4:   #18181f;
+  --glass:  rgba(6,6,10,.92);
 
-  /* Text — neutral white */
-  --tx:     #e2e2ee;
-  --tx-2:   #7878a0;
-  --tx-3:   #44445e;
+  /* Starlight text */
+  --tx:     #dde6f5;
+  --tx-2:   #5a6a90;
+  --tx-3:   #303858;
 
-  /* Gold/Amber — warm accent */
-  --gold:   #f0a020;
-  --gold-l: #ffbe40;
-  --gold-d: #c07810;
-  --gold-a: rgba(240,160,32,.15);
-  --gold-b: rgba(240,160,32,.30);
+  /* Astrophage orange — primary accent */
+  --gold:   #e06818;
+  --gold-l: #f08838;
+  --gold-d: #a84c10;
+  --gold-a: rgba(224,104,24,.16);
+  --gold-b: rgba(224,104,24,.32);
 
-  /* Coral — pops on dark */
-  --coral:   #ff5a35;
-  --coral-l: #ff7c55;
-  --coral-d: #cc3a18;
-  --coral-a: rgba(255,90,53,.15);
+  /* Coral — kept */
+  --coral:   #e84828;
+  --coral-l: #f06840;
+  --coral-d: #b03018;
+  --coral-a: rgba(232,72,40,.15);
 
-  /* Teal/Cyan — accent */
-  --teal:   #00c8f0;
-  --teal-l: #20e0ff;
-  --teal-a: rgba(0,200,240,.15);
+  /* Science blue — secondary */
+  --teal:   #4a9ee0;
+  --teal-l: #68b8f8;
+  --teal-a: rgba(74,158,224,.15);
 
-  /* Borders — neutral */
-  --b1: rgba(255,255,255,.07);
-  --b2: rgba(255,255,255,.12);
-  --b3: rgba(255,255,255,.20);
-  --b4: rgba(255,255,255,.32);
+  /* Borders */
+  --b1: rgba(255,255,255,.06);
+  --b2: rgba(255,255,255,.10);
+  --b3: rgba(255,255,255,.18);
+  --b4: rgba(255,255,255,.30);
 
   /* Type */
   --serif: 'Cormorant Garamond', 'Palatino Linotype', Georgia, serif;
-  --sans:  'Syne', system-ui, sans-serif;
+  --sans:  'Space Grotesk', system-ui, sans-serif;
   --mono:  'JetBrains Mono', 'Courier New', monospace;
 
   /* Fluid scale */
@@ -177,8 +178,8 @@ section { position: relative; padding: clamp(2.5rem, 5vw, 6rem) 0; }
   width: 80vmax; height: 80vmax;
   border-radius: 50%;
   background: radial-gradient(circle at var(--gx,50%) var(--gy,40%),
-    rgba(0,200,240,.24) 0%,
-    rgba(0,200,240,.10) 40%,
+    rgba(74,158,224,.20) 0%,
+    rgba(74,158,224,.08) 40%,
     transparent 66%);
   pointer-events: none; z-index: 0;
   animation: ambientA 14s ease-in-out infinite alternate;
@@ -190,8 +191,8 @@ section { position: relative; padding: clamp(2.5rem, 5vw, 6rem) 0; }
   width: 65vmax; height: 65vmax;
   border-radius: 50%;
   background: radial-gradient(circle,
-    rgba(240,160,32,.22) 0%,
-    rgba(240,160,32,.08) 42%,
+    rgba(224,104,24,.22) 0%,
+    rgba(224,104,24,.08) 42%,
     transparent 68%);
   pointer-events: none; z-index: 0;
   animation: ambientB 18s ease-in-out infinite alternate;
@@ -290,7 +291,7 @@ section { position: relative; padding: clamp(2.5rem, 5vw, 6rem) 0; }
   border-bottom: 1px solid transparent;
 }
 .nav.is-scrolled {
-  background: rgba(10,10,14,.92);
+  background: rgba(6,6,10,.92);
   backdrop-filter: blur(22px) saturate(180%);
   -webkit-backdrop-filter: blur(22px) saturate(180%);
   border-bottom-color: var(--b1);
@@ -406,7 +407,7 @@ section { position: relative; padding: clamp(2.5rem, 5vw, 6rem) 0; }
   display: flex; flex-direction: column; justify-content: flex-end;
   padding: clamp(5rem, 12vw, 11rem) clamp(2rem, 4vw, 4rem) 3.5rem clamp(2rem, 7vw, 8rem);
   position: relative; z-index: 1;
-  background: radial-gradient(ellipse 95% 90% at 20% 70%, rgba(10,10,14,.96) 0%, rgba(10,10,14,.68) 50%, transparent 74%);
+  background: radial-gradient(ellipse 95% 90% at 20% 70%, rgba(6,6,10,.96) 0%, rgba(6,6,10,.68) 50%, transparent 74%);
 }
 .hero__eyebrow {
   display: flex; align-items: center; gap: 1rem;

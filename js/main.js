@@ -1209,9 +1209,11 @@ function initHero3D() {
   resize();
   window.addEventListener('resize', resize, { passive: true });
 
-  // Single gold color for all particles (blueprint amber)
+  // Astrophage particles — warm orange + science blue mix
   const palette = [
-    [240, 175, 40],
+    [224, 104, 24],   // Astrophage orange
+    [104, 184, 248],  // science blue
+    [224, 104, 24],   // orange (weighted 2:1)
   ];
   const N    = 125;
   const LINK = 190;
@@ -1272,16 +1274,16 @@ function initHero3D() {
       const al = s.life;
       const ratio = s.vy / s.vx;
       const grad = ctx.createLinearGradient(s.x - s.len, s.y - s.len * ratio, s.x, s.y);
-      grad.addColorStop(0,   `rgba(240,175,40,0)`);
-      grad.addColorStop(0.6, `rgba(240,175,40,${al * 0.55})`);
-      grad.addColorStop(1,   `rgba(255,240,160,${al * 0.95})`);
+      grad.addColorStop(0,   `rgba(224,104,24,0)`);
+      grad.addColorStop(0.6, `rgba(224,104,24,${al * 0.55})`);
+      grad.addColorStop(1,   `rgba(248,180,120,${al * 0.95})`);
       ctx.beginPath();
       ctx.moveTo(s.x - s.len, s.y - s.len * ratio);
       ctx.lineTo(s.x, s.y);
       ctx.strokeStyle = grad; ctx.lineWidth = 2.2; ctx.stroke();
       const tipG = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, 14);
-      tipG.addColorStop(0, `rgba(255,248,200,${al})`);
-      tipG.addColorStop(1, `rgba(240,175,40,0)`);
+      tipG.addColorStop(0, `rgba(255,200,140,${al})`);
+      tipG.addColorStop(1, `rgba(224,104,24,0)`);
       ctx.beginPath(); ctx.arc(s.x, s.y, 14, 0, Math.PI * 2); ctx.fillStyle = tipG; ctx.fill();
     }
 
@@ -1293,7 +1295,7 @@ function initHero3D() {
         const d2 = dx * dx + dy * dy;
         if (d2 < LINK * LINK) {
           ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
-          ctx.strokeStyle = `rgba(240,175,40,${(1 - Math.sqrt(d2) / LINK) * 0.20})`;
+          ctx.strokeStyle = `rgba(224,104,24,${(1 - Math.sqrt(d2) / LINK) * 0.18})`;
           ctx.lineWidth = 0.7; ctx.stroke();
         }
       }
