@@ -756,15 +756,7 @@ window.addEventListener('scroll', () => {
   progressBar.style.transform = `scaleX(${p})`;
 }, { passive: true });
 
-/* ============= HERO PARALLAX (scroll) ============= */
-const heroImg = document.getElementById('heroImg');
-window.addEventListener('scroll', () => {
-  if (!heroImg) return;
-  const y = window.scrollY;
-  if (y < window.innerHeight * 1.4) {
-    heroImg.style.transform = `translate3d(0, ${y * 0.16}px, 0) scale(${1 + y * 0.00018})`;
-  }
-}, { passive: true });
+/* hero image is intentionally static — no scroll parallax */
 
 /* ============= SPLIT TEXT ============= */
 function splitTextWords() {
@@ -781,31 +773,6 @@ splitTextWords();
 
 /* ============= REVEALS (anime.js spring physics) ============= */
 function triggerReveals() {
-  // Section-level observer: staggered card bursts
-  const sectionIo = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      const sec = e.target;
-      // Stagger place-cards or subjects if this section has them
-      const cards = sec.querySelectorAll('.place-card');
-      const subjects = sec.querySelectorAll('.subject');
-      if (cards.length && typeof anime !== 'undefined') {
-        anime({
-          targets: cards, opacity: [0, 1], translateY: [45, 0], scale: [0.96, 1],
-          duration: 650, delay: anime.stagger(75), easing: 'spring(1, 78, 12, 0)',
-        });
-      }
-      if (subjects.length && typeof anime !== 'undefined') {
-        anime({
-          targets: subjects, opacity: [0, 1], translateX: [-35, 0],
-          duration: 700, delay: anime.stagger(100), easing: 'easeOutExpo',
-        });
-      }
-      sectionIo.unobserve(sec);
-    });
-  }, { threshold: 0.08 });
-  document.querySelectorAll('.places, .subjects').forEach(s => sectionIo.observe(s));
-
   // Element-level observer: individual .rv elements
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => {
@@ -948,9 +915,8 @@ function setupHeroParallax() {
     const frame   = hero.querySelector('.hero__frame');
     const content = hero.querySelector('.hero__content');
     const stamp   = hero.querySelector('.hero__stamp');
-    if (frame)   frame.style.transform   = `perspective(1400px) rotateY(${-8 + cx * 5}deg) rotateX(${3 + cy * -3}deg)`;
-    if (content) content.style.transform = `translate3d(${cx * 7}px, ${cy * 4}px, 0)`;
-    if (stamp)   stamp.style.transform   = `translate3d(${cx * 16}px, ${cy * 10}px, 0) rotate(-12deg)`;
+    if (content) content.style.transform = `translate3d(${cx * 5}px, ${cy * 3}px, 0)`;
+    if (stamp)   stamp.style.transform   = `translate3d(${cx * 12}px, ${cy * 8}px, 0) rotate(-12deg)`;
     if (Math.abs(tx - cx) > 0.001 || Math.abs(ty - cy) > 0.001) {
       raf = requestAnimationFrame(tick);
     } else {
@@ -1680,6 +1646,66 @@ function setupAmbientGlow() {
   loop();
 }
 
+/* ============= SCROLL-LINKED REVEALS (animejs.com ScrollObserver style) ============= */
+function setupScrollLinked() {
+  const SEL = '.place-card, .subject, .gal, .stat, .intro__photo, .cta-block__photo';
+  let els = [];
+  let pending = false;
+
+  function smooth(x) { return x * x * (3 - 2 * x); } // smoothstep
+
+  function run() {
+    pending = false;
+    const vh = window.innerHeight;
+    els.forEach(el => {
+      const top = el.getBoundingClientRect().top;
+      let p, ty = 0, tx = 0, sc = 1;
+
+      if (el.classList.contains('subject')) {
+        p = smooth(Math.max(0, Math.min(1, (vh - top) / (vh * 0.65))));
+        tx = (1 - p) * -45;
+      } else if (el.classList.contains('gal')) {
+        p = smooth(Math.max(0, Math.min(1, (vh - top) / (vh * 0.55))));
+        sc = 0.88 + p * 0.12;
+        ty = (1 - p) * 30;
+      } else if (el.classList.contains('stat')) {
+        p = smooth(Math.max(0, Math.min(1, (vh - top) / (vh * 0.5))));
+        ty = (1 - p) * 22;
+      } else if (el.classList.contains('intro__photo') || el.classList.contains('cta-block__photo')) {
+        p = smooth(Math.max(0, Math.min(1, (vh - top) / (vh * 0.5))));
+        sc = 0.90 + p * 0.10;
+        ty = (1 - p) * 18;
+      } else {
+        p = smooth(Math.max(0, Math.min(1, (vh - top) / (vh * 0.62))));
+        ty = (1 - p) * 55;
+      }
+
+      if (p >= 0.999) {
+        el.style.opacity = '';
+        el.style.transform = '';
+        el.style.willChange = '';
+      } else {
+        el.style.opacity = p.toFixed(3);
+        el.style.transform = `translateX(${tx.toFixed(1)}px) translateY(${ty.toFixed(1)}px) scale(${sc.toFixed(4)})`;
+      }
+    });
+  }
+
+  function collect() {
+    els = [...document.querySelectorAll(SEL)];
+    els.forEach(el => { el.style.willChange = 'transform, opacity'; });
+    run();
+  }
+
+  function onScroll() {
+    if (!pending) { pending = true; requestAnimationFrame(run); }
+  }
+
+  collect();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', collect, { passive: true });
+}
+
 /* ============= INIT ============= */
 document.addEventListener('DOMContentLoaded', () => {
   initHero3D();
@@ -1690,6 +1716,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupAmbientGlow();
   initMap();
   triggerReveals();
+  setupScrollLinked();
   animateCounters();
   setupMagnetic();
   setupTilt();
